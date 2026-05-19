@@ -143,23 +143,15 @@ export default function App() {
 
     setLoading(true);
     try {
+      const parsedData = await parseSAPFile(file);
+      console.log("📊 PARSED DATA:", parsedData);
+      console.log("📊 TOTAL:", parsedData.length);
       
-const parsedData = await parseSAPFile(file);
+      if (parsedData.length > 0) {
+        console.log("🔥 COLUNAS REAIS:", Object.keys(parsedData[0]));
+      }
 
-console.log("🔥 RAW DATA:", parsedData);
-
-if (parsedData.length > 0) {
-  console.log("🔥 COLUNAS REAIS:", Object.keys(parsedData[0]));
-}
-
-processData(parsedData);
-
-
-console.log("📊 PARSED DATA:", parsedData);
-console.log("📊 TOTAL:", parsedData.length);
-
-processData(parsedData);
-
+      processData(parsedData);
     } catch (err) {
       console.error(err);
       alert('Falha ao processar ficheiro SAP. Verifique o formato.');
@@ -312,25 +304,38 @@ processData(parsedData);
   };
 
   const markAsSent = (key: string) => {
-    setResults(prev => prev.map(r => 
-      (`${r.ref3}_${r.email}` === key) ? { ...r, enviado: true } : r
-    ));
-    
-    // Update ranking using functional update to ensure state consistency
-    const item = results.find(r => `${r.ref3}_${r.email}` === key);
-    if (item) {
-      setRanking(prev => {
-        const newRanking = [...prev];
-        const existing = newRanking.find(s => s.ref3 === item.ref3);
-        if (existing) {
-          existing.count += 1;
+    // Check if already marked as sent in the CURRENT RENDER results to prevent double-trigger in same frame
+    const candidate = results.find(r => `${r.ref3}_${r.email}` === key);
+    if (!candidate || candidate.enviado) return;
+
+    setResults(prev => {
+      const item = prev.find(r => `${r.ref3}_${r.email}` === key);
+      if (!item || item.enviado) return prev; // Idempotency check inside state update
+
+      // Mark as sent
+      const nextResults = prev.map(r => 
+        (`${r.ref3}_${r.email}` === key) ? { ...r, enviado: true } : r
+      );
+
+      // Update ranking - we use the 'item' found in 'prev' to get most accurate data
+      setRanking(prevRanking => {
+        const nr = Array.isArray(prevRanking) ? [...prevRanking] : [];
+        const existingIdx = nr.findIndex(s => s.ref3 === item.ref3);
+        
+        let updated;
+        if (existingIdx !== -1) {
+          updated = nr.map((s, i) => 
+            i === existingIdx ? { ...s, count: s.count + 1 } : s
+          );
         } else {
-          newRanking.push({ ref3: item.ref3, name: item.vendedor, count: 1 });
+          updated = [...nr, { ref3: item.ref3, name: item.vendedor, count: 1 }];
         }
-        localStorage.setItem('app_ranking', JSON.stringify(newRanking));
-        return newRanking;
+        localStorage.setItem('app_ranking', JSON.stringify(updated));
+        return updated;
       });
-    }
+
+      return nextResults;
+    });
   };
 
   const generateEMLBlob = (item: GroupedData) => {
@@ -385,6 +390,7 @@ processData(parsedData);
   };
 
   const openEmail = (item: GroupedData) => {
+    if (item.enviado) return;
     const blob = generateEMLBlob(item);
     // Download the EML file - opening it will trigger the default email client (Outlook)
     saveAs(blob, `DRAFT_V${item.ref3}_${item.vendedor.replace(/\s+/g, '_')}.eml`);
