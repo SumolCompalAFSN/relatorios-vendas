@@ -67,32 +67,39 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<GroupedData[]>([]);
   const [importModal, setImportModal] = useState(false);
-  const [ranking, setRanking] = useState<any[]>(() => {
+  const [ranking, setRanking] = useState<any[]>([]);
+  useEffect(() => {
+  const saved = localStorage.getItem("app_ranking");
+
+  if (saved) {
     try {
-      const saved = localStorage.getItem('app_ranking') || localStorage.getItem('app_stats');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) ? parsed : [];
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        setRanking(parsed);
       }
     } catch (e) {
-      console.error("Error loading ranking:", e);
+      console.error("Erro ao carregar ranking:", e);
     }
-    return [];
-  });
+  }
+}, []); 
   
   // Sync ranking to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('app_ranking', JSON.stringify(ranking));
-  }, [ranking]);
 
   const handleResetRanking = () => {
-    if (confirm("Deseja limpar o ranking de atividade e o histórico de envios atual?")) {
-      setRanking([]);
-      localStorage.removeItem('app_ranking');
-      localStorage.removeItem('app_stats'); 
-      setResults(prev => prev.map(r => ({ ...r, enviado: false })));
-    }
-  };
+    
+    console.log("RESET EXECUTADO ✅");
+
+  // limpar tudo relacionado com ranking
+  localStorage.removeItem('app_ranking');
+  localStorage.removeItem('app_stats');
+
+  // limpar memória
+  setRanking([]);
+  setResults(prev => prev.map(r => ({ ...r, enviado: false })));
+
+  // 💥 FORÇAR RELOAD DA APP (garantia total)
+  window.location.reload();
+};
 
   const handleResetAll = () => {
     if (confirm("Deseja limpar todos os dados? Esta ação é irreversível e apagará o histórico, e-mails e resultados atuais.")) {
@@ -114,22 +121,17 @@ export default function App() {
     ? Math.max(...allDocsForMetrics.map(d => d.diasUteis || 0)) 
     : 0;
   
+  // DIFERENÇAS Calculations
+  const maxDifferences = results.length > 0
+    ? Math.max(...results.map(r => r.docs.length))
+    : 0;
+  const avgValue = results.length > 0
+    ? results.reduce((sum, r) => sum + r.total, 0) / results.length
+    : 0;
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync ranking from localStorage if it changes externally or on emails change (legacy sync)
-  useEffect(() => {
-    const savedRanking = localStorage.getItem('app_ranking') || localStorage.getItem('app_stats');
-    if (savedRanking) {
-      try {
-        const parsed = JSON.parse(savedRanking);
-        if (Array.isArray(parsed)) {
-          setRanking(parsed);
-        }
-      } catch (e) {
-        console.error("Error parsing ranking during sync:", e);
-      }
-    }
-  }, [emails]);
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -308,29 +310,30 @@ export default function App() {
   };
 
   const markAsSent = (key: string) => {
-    // Check if the item needs updating
-    const item = results.find(r => `${r.ref3}_${r.email}` === key);
-    if (!item || item.enviado) return;
+  const item = results.find(r => `${r.ref3}_${r.email}` === key);
+  if (!item || item.enviado) return;
 
-    // 1. Mark as sent in results
-    setResults(prev => prev.map(r => 
-      (`${r.ref3}_${r.email}` === key) ? { ...r, enviado: true } : r
-    ));
+  setResults(prev =>
+    prev.map(r =>
+      `${r.ref3}_${r.email}` === key
+        ? { ...r, enviado: true }
+        : r
+    )
+  );
 
-    // 2. Increment ranking
-    setRanking(prev => {
-      const nr = Array.isArray(prev) ? [...prev] : [];
-      const existingIdx = nr.findIndex(s => s.ref3 === item.ref3);
-      
-      if (existingIdx !== -1) {
-        return nr.map((s, i) => 
-          i === existingIdx ? { ...s, count: s.count + 1 } : s
-        );
-      } else {
-        return [...nr, { ref3: item.ref3, name: item.vendedor, count: 1 }];
-      }
-    });
-  };
+  setRanking(prev => {
+    const copy = [...prev];
+    const idx = copy.findIndex(r => r.ref3 === item.ref3);
+
+    if (idx >= 0) {
+      copy[idx].count += 1;
+    } else {
+      copy.push({ ref3: item.ref3, count: 1 });
+    }
+
+    return copy;
+  });
+};
 
   const generateEMLBlob = (item: GroupedData) => {
     const html = mode === 'ATRASO' ? buildHtmlEmailAtrasos({
@@ -540,24 +543,32 @@ export default function App() {
                 </motion.p>
               </div>
 
-              <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
-                <p className="text-xs text-gray-500 mb-1">Nº Recibos sem Depósito</p>
-                <p className="text-2xl font-bold text-slate-800 tracking-tight">
-                  {totalDocsCount}
-                </p>
-              </div>
+              {mode === 'ATRASO' && (
+                <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
+                  <p className="text-xs text-gray-500 mb-1">Nº Recibos sem Depósito</p>
+                  <p className="text-2xl font-bold text-slate-800 tracking-tight">
+                    {totalDocsCount}
+                  </p>
+                </div>
+              )}
 
               <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
-                <p className="text-xs text-gray-500 mb-1">Maior Atraso</p>
+                <p className="text-xs text-gray-500 mb-1">
+                  {mode === 'ATRASO' ? 'Maior Atraso' : 'Maior Nº de Diferenças'}
+                </p>
                 <p className="text-2xl font-bold text-red-600 tracking-tight">
-                  {maxDelay} dias
+                  {mode === 'ATRASO' ? `${maxDelay} dias` : maxDifferences}
                 </p>
               </div>
 
               <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
-                <p className="text-xs text-gray-500 mb-1">Média Atraso</p>
+                <p className="text-xs text-gray-500 mb-1">
+                  {mode === 'ATRASO' ? 'Média Atraso' : 'Média de Valor'}
+                </p>
                 <p className="text-2xl font-bold text-orange-600 tracking-tight">
-                  {avgDelay.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} dias
+                  {mode === 'ATRASO' 
+                    ? `${avgDelay.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} dias` 
+                    : formatCurrency(avgValue)}
                 </p>
               </div>
             </div>
@@ -725,37 +736,39 @@ export default function App() {
         </main>
 
         {/* Right Panel - Ranking */}
-        <aside className="w-[250px] bg-white border-l border-gray-200 p-4 shrink-0 overflow-y-auto hidden xl:block">
-          <div className="space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Ranking de Atividade</h3>
-                <button 
-                  onClick={handleResetRanking}
-                  className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded hover:bg-red-50"
-                  title="Resetar ranking de atividade"
-                >
-                  <Trash2 size={14} />
-                </button>
+        {mode === 'ATRASO' && (
+          <aside className="w-[250px] bg-white border-l border-gray-200 p-4 shrink-0 overflow-y-auto hidden xl:block">
+            <div className="space-y-6">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Ranking de Atividade</h3>
+                  <button 
+                    onClick={handleResetRanking}
+                    className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded hover:bg-red-50"
+                    title="Resetar ranking de atividade"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+                <ul className="text-xs space-y-3">
+                  {ranking.length === 0 && <li className="text-gray-400 italic">Sem dados...</li>}
+                  {ranking.slice().sort((a, b) => b.count - a.count).slice(0, 8).map((s, idx) => {
+                    const normalizedRef = String(s.ref3).replace(/\D/g, "").padStart(3, "0");
+                    const vendor = emails[normalizedRef];
+                    const displayName = vendor ? `${normalizedRef} - ${vendor.nome}` : normalizedRef;
+                    
+                    return (
+                      <li key={idx} className="flex justify-between items-center group">
+                        <span className="text-gray-600 truncate mr-2 group-hover:text-[#0A6ED1] transition-colors">{displayName}</span>
+                        <span className="font-bold bg-gray-100 px-2 py-0.5 rounded text-[10px]">{s.count}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
-              <ul className="text-xs space-y-3">
-                {ranking.length === 0 && <li className="text-gray-400 italic">Sem dados...</li>}
-                {[...ranking].sort((a,b) => b.count - a.count).slice(0, 8).map((s, idx) => {
-                  const normalizedRef = String(s.ref3).replace(/\D/g, "").padStart(3, "0");
-                  const vendor = emails[normalizedRef];
-                  const displayName = vendor ? `${normalizedRef} - ${vendor.nome}` : normalizedRef;
-                  
-                  return (
-                    <li key={idx} className="flex justify-between items-center group">
-                      <span className="text-gray-600 truncate mr-2 group-hover:text-[#0A6ED1] transition-colors">{displayName}</span>
-                      <span className="font-bold bg-gray-100 px-2 py-0.5 rounded text-[10px]">{s.count}</span>
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
-          </div>
-        </aside>
+          </aside>
+        )}
       </div>
 
       {/* Settings Modal (Unchanged functionality, styled for theme) */}
