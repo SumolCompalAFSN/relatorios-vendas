@@ -80,12 +80,16 @@ export default function App() {
     return [];
   });
   
+  // Sync ranking to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('app_ranking', JSON.stringify(ranking));
+  }, [ranking]);
+
   const handleResetRanking = () => {
     if (confirm("Deseja limpar o ranking de atividade e o histórico de envios atual?")) {
       setRanking([]);
       localStorage.removeItem('app_ranking');
-      localStorage.removeItem('app_stats'); // Migration cleanup
-      // Clear sent status from current results
+      localStorage.removeItem('app_stats'); 
       setResults(prev => prev.map(r => ({ ...r, enviado: false })));
     }
   };
@@ -304,37 +308,27 @@ export default function App() {
   };
 
   const markAsSent = (key: string) => {
-    // Check if already marked as sent in the CURRENT RENDER results to prevent double-trigger in same frame
-    const candidate = results.find(r => `${r.ref3}_${r.email}` === key);
-    if (!candidate || candidate.enviado) return;
+    // Check if the item needs updating
+    const item = results.find(r => `${r.ref3}_${r.email}` === key);
+    if (!item || item.enviado) return;
 
-    setResults(prev => {
-      const item = prev.find(r => `${r.ref3}_${r.email}` === key);
-      if (!item || item.enviado) return prev; // Idempotency check inside state update
+    // 1. Mark as sent in results
+    setResults(prev => prev.map(r => 
+      (`${r.ref3}_${r.email}` === key) ? { ...r, enviado: true } : r
+    ));
 
-      // Mark as sent
-      const nextResults = prev.map(r => 
-        (`${r.ref3}_${r.email}` === key) ? { ...r, enviado: true } : r
-      );
-
-      // Update ranking - we use the 'item' found in 'prev' to get most accurate data
-      setRanking(prevRanking => {
-        const nr = Array.isArray(prevRanking) ? [...prevRanking] : [];
-        const existingIdx = nr.findIndex(s => s.ref3 === item.ref3);
-        
-        let updated;
-        if (existingIdx !== -1) {
-          updated = nr.map((s, i) => 
-            i === existingIdx ? { ...s, count: s.count + 1 } : s
-          );
-        } else {
-          updated = [...nr, { ref3: item.ref3, name: item.vendedor, count: 1 }];
-        }
-        localStorage.setItem('app_ranking', JSON.stringify(updated));
-        return updated;
-      });
-
-      return nextResults;
+    // 2. Increment ranking
+    setRanking(prev => {
+      const nr = Array.isArray(prev) ? [...prev] : [];
+      const existingIdx = nr.findIndex(s => s.ref3 === item.ref3);
+      
+      if (existingIdx !== -1) {
+        return nr.map((s, i) => 
+          i === existingIdx ? { ...s, count: s.count + 1 } : s
+        );
+      } else {
+        return [...nr, { ref3: item.ref3, name: item.vendedor, count: 1 }];
+      }
     });
   };
 
