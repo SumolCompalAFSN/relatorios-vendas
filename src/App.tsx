@@ -136,10 +136,12 @@ const handleResetRanking = () => {
       alert('Para o modo Atrasos, o ficheiro deve chamar-se: export_atr.xlsx');
       return;
     }
-    if (mode === 'DIFERENCA' && file.name !== 'export_dif.xlsx') {
-      alert('Para o modo Diferenças, o ficheiro deve chamar-se: export_dif.xlsx');
-      return;
+    
+    // 🔥 TEMP: deixar passar tudo para testar
+    if (mode === 'DIFERENCA') {
+      console.log("MODO DIFERENÇA - FICHEIRO:", file.name);
     }
+
 
     setLoading(true);
     try {
@@ -165,34 +167,47 @@ const handleResetRanking = () => {
     const today = new Date();
     
     // Filtro OBRIGATÓRIO: Apenas Tipo de documento = "ZD"
-    const zdData = data.filter(row => String(row['Tipo de documento'] || '').toUpperCase() === 'ZD');
-    console.log("📊 Linhas ZD encontradas:", zdData.length);
+const zdData = data.filter(row =>
+  String(row['Tipo de documento'] || '').toUpperCase() === 'ZD'
+);
+console.log("📊 Linhas ZD encontradas:", zdData.length);
 
-    if (mode === 'ATRASO') {
-      const filtered = zdData.filter(row => {
-        const texto = String(row.texto || row['Texto'] || '').toUpperCase();
-        if (texto === 'EM ANÁLISE') return false;
-        if (texto.includes('PAG. TPA VENDEDOR')) return false;
+// ✅ NOVO: filtro para Diferenças (SA)
+const saData = data.filter(row =>
+  String(row['Tipo de documento'] || '').toUpperCase() === 'SA'
+);
+console.log("📊 Linhas SA encontradas:", saData.length);
 
-        let dataLanc = row.data || row['Data de lançamento'];
-        if (!dataLanc) return false;
+if (mode === 'ATRASO') {
+  const filtered = zdData.filter(row => {
+    const texto = String(row.texto || row['Texto'] || '').toUpperCase();
+    if (texto === 'EM ANÁLISE') return false;
+    if (texto.includes('PAG. TPA VENDEDOR')) return false;
 
-        if (!(dataLanc instanceof Date)) {
-          dataLanc = new Date(dataLanc);
-        }
+    let dataLanc = row.data || row['Data de lançamento'];
+    if (!dataLanc) return false;
 
-        if (isNaN(dataLanc.getTime())) return false;
-
-        const dias = calcularDiasUteis(dataLanc, today);
-        row.diasUteis = dias;
-        return dias >= 2;
-      });
-
-      console.log("✅ FILTRADOS:", filtered.length);
-      groupAndSet(filtered);
-    } else {
-      groupAndSet(zdData);
+    if (!(dataLanc instanceof Date)) {
+      dataLanc = new Date(dataLanc);
     }
+
+    if (isNaN(dataLanc.getTime())) return false;
+
+    const dias = calcularDiasUteis(dataLanc, today);
+    row.diasUteis = dias;
+    return dias >= 2;
+  });
+
+  console.log("✅ FILTRADOS:", filtered.length);
+
+  groupAndSet(filtered);
+
+} else {
+  console.log("👉 ENTROU EM DIFERENÇA");
+
+  // ✅ USAR SA EM VEZ DE ZD
+  groupAndSet(saData);
+}
   };
 
   const groupAndSet = (data: any[]) => {
