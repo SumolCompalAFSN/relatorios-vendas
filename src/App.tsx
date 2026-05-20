@@ -83,22 +83,16 @@ export default function App() {
   }
 }, []); 
   
-  // Sync ranking to localStorage whenever it changes
+  // Reset apenas do ranking
+const handleResetRanking = () => {
 
-  const handleResetRanking = () => {
-    
-    console.log("RESET EXECUTADO ✅");
+  console.log("RESET RANKING ✅");
 
-  // limpar tudo relacionado com ranking
+  // ✅ limpar apenas ranking
   localStorage.removeItem('app_ranking');
-  localStorage.removeItem('app_stats');
 
-  // limpar memória
+  // ✅ limpar estado do ranking (UI)
   setRanking([]);
-  setResults(prev => prev.map(r => ({ ...r, enviado: false })));
-
-  // 💥 FORÇAR RELOAD DA APP (garantia total)
-  window.location.reload();
 };
 
   const handleResetAll = () => {
