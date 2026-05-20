@@ -65,7 +65,8 @@ export default function App() {
   const [mode, setMode] = useState<Mode>('ATRASO');
   const [emails, setEmails] = useState<Record<string, EmailConfig>>(loadEmails());
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<GroupedData[]>([]);
+  const [resultsAtraso, setResultsAtraso] = useState<GroupedData[]>([]);
+  const [resultsDiferenca, setResultsDiferenca] = useState<GroupedData[]>([]);
   const [importModal, setImportModal] = useState(false);
   const [ranking, setRanking] = useState<any[]>([]);
   useEffect(() => {
@@ -104,6 +105,10 @@ const handleResetRanking = () => {
       alert("Sistema restaurado para o estado inicial.");
     }
   };
+
+  const results = mode === 'ATRASO'
+  ? resultsAtraso
+  : resultsDiferenca;
 
   // Right panel calculations
   const allDocsForMetrics = results.flatMap(r => r.docs);
@@ -253,7 +258,15 @@ if (mode === 'ATRASO') {
       groups[key].total += val;
     });
 
-    setResults(Object.values(groups).sort((a, b) => b.total - a.total));
+    
+      const final = Object.values(groups).sort((a, b) => b.total - a.total);
+
+      if (mode === 'ATRASO') {
+        setResultsAtraso(final);
+      } else {
+        setResultsDiferenca(final);
+      }
+
   };
 
   const handleImportEmails = async (e: ChangeEvent<HTMLInputElement>) => {
