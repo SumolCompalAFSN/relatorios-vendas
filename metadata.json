@@ -1,6 +1,0 @@
-{
-  "name": "Relatório PA's Transportes",
-  "description": "Ferramenta robusta para processamento de ficheiros SAP e geração automática de emails de atrasos e diferenças.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
