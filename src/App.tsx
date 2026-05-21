@@ -352,13 +352,24 @@ if (mode === 'ATRASO') {
 
   const markAsSent = (item: GroupedData) => {
   console.log("Marcar como enviado:", item.ref3);
-    setResults(prev =>
-  prev.map(r =>
-    r.ref3 === item.ref3 && r.email === item.email
-      ? { ...r, enviado: true }
-      : r
-  )
-);
+
+  if (mode === 'ATRASO') {
+    setResultsAtraso(prev =>
+      prev.map(r =>
+        r.ref3 === item.ref3 && r.email === item.email
+          ? { ...r, enviado: true }
+          : r
+      )
+    );
+  } else {
+    setResultsDiferenca(prev =>
+      prev.map(r =>
+        r.ref3 === item.ref3 && r.email === item.email
+          ? { ...r, enviado: true }
+          : r
+      )
+    );
+  }
 };
   
   const generateEMLBlob = (item: GroupedData) => {
