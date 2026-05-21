@@ -21,11 +21,11 @@ jobs:
         with:
           node-version: 18
 
-      - name: Instalar dependências
+      - name: Limpar e instalar dependências
         run: |
-          rm -f package-lock.json
           rm -rf node_modules
-          npm install
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
 
       - name: Build
         run: npm run build
