@@ -35,6 +35,8 @@ import { calcularDiasUteis } from './utils/dateUtils';
 import { EMAILS_DEFAULT, EmailConfig } from './data/emailsDefault';
 import { getRef3, formatCurrency, cn, parseSAPValue } from './lib/utils';
 import { buildHtmlEmailAtrasos, buildHtmlEmailDiferencas, generatePDF, EmailData } from './utils/emailUtils';
+import rvvIcon from './assets/rvv-icon.png';
+
 
 type Mode = 'ATRASO' | 'DIFERENCA';
 
@@ -169,7 +171,7 @@ const handleResetAll = () => {
 
     setLoading(true);
     try {
-      const parsedData = await parseSAPFile(file);
+      const parsedData = await parseFile(file);
       console.log("📊 PARSED DATA:", parsedData);
       console.log("📊 TOTAL:", parsedData.length);
       
@@ -180,7 +182,7 @@ const handleResetAll = () => {
       processData(parsedData);
     } catch (err) {
       console.error(err);
-      alert('Falha ao processar ficheiro SAP. Verifique o formato.');
+      alert('Falha ao processar ficheiro . Verifique o formato.');
     } finally {
       setLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -272,7 +274,7 @@ if (mode === 'ATRASO') {
           total: 0
         };
       }
-      const val = parseSAPValue(row.valor || row['Montante em moeda interna'] || 0);
+      const val = parseValue(row.valor || row['Montante em moeda interna'] || 0);
       groups[key].docs.push(row);
       groups[key].total += val;
     });
@@ -394,7 +396,7 @@ if (mode === 'ATRASO') {
         ? `Atrasos nos depósitos - V${item.ref3} ${item.vendedor}`
         : `Diferenças de depósito - V${item.ref3} ${item.vendedor}`;
 
-    const boundary = "boundary_sap_afsn_" + Date.now();
+    const boundary = "boundary__afsn_" + Date.now();
     const textPlain = `Bom dia,\n\nPor favor, veja o relatório detalhado no corpo do email HTML.\n\nVendedor: ${item.vendedor} (V${item.ref3})\nTotal: ${formatCurrency(item.total)}\n\nEquipa AFSN`;
 
     const emlLines = [
@@ -487,11 +489,13 @@ if (mode === 'ATRASO') {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#F5F6F7] text-[#333] font-sans">
-      {/* SAP Style Header */}
+      {/*  Style Header */}
       <header className="h-14 bg-[#0A6ED1] flex items-center justify-between px-6 shrink-0 shadow-md z-10">
         <div className="flex items-center space-x-4">
           <div className="bg-white p-1 rounded-sm shadow-sm ring-1 ring-black/5">
-            <div className="w-6 h-6 border-2 border-[#0A6ED1] flex items-center justify-center font-bold text-[10px] text-[#0A6ED1]">SAP</div>
+            <div className="w-6 h-6 flex items-center justify-center">
+  <img src={rvvIcon} alt="RVV" className="w-5 h-5 object-contain" />
+</div>
           </div>
           <h1 className="text-white font-semibold text-lg tracking-tight italic flex items-center">
             RVV — Relatórios Valores Vendas 
