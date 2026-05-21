@@ -351,13 +351,19 @@ if (mode === 'ATRASO') {
   };
 
   const markAsSent = (key: string) => {
-  setResults(prev =>
-    prev.map(r =>
+  console.log("KEY:", key);
+
+  setResults(prev => {
+    const updated = prev.map(r =>
       `${r.ref3}_${r.email}` === key
         ? { ...r, enviado: true }
         : r
-    )
-  );
+    );
+
+    console.log("UPDATED RESULTS:", updated); // 👈 AQUI
+
+    return updated;
+  });
 };
 
   const generateEMLBlob = (item: GroupedData) => {
