@@ -735,6 +735,7 @@ if (mode === 'ATRASO') {
                   </button>
                   <button 
                     onClick={() => {
+  console.log(item); // 👈 adiciona isto
   openEmail(item);
   atualizarRanking(item.ref3);
 }}
