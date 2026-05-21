@@ -739,9 +739,9 @@ if (mode === 'ATRASO') {
                   </button>
                   <button 
                     onClick={() => {
-  console.log(item); // 👈 adiciona isto
+  console.log("REF3:", item.ref3);  // 👉 ver valor real
   openEmail(item);
-  atualizarRanking(item.ref3 || item.REF3);
+  atualizarRanking(item.ref3);
 }}
                     className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition"
                   >
