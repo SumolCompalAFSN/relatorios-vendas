@@ -352,7 +352,14 @@ if (mode === 'ATRASO') {
 
   const markAsSent = (item: GroupedData) => {
   console.log("Marcar como enviado:", item.ref3);
-
+    setResults(prev =>
+  prev.map(r =>
+    r.ref3 === item.ref3 && r.email === item.email
+      ? { ...r, enviado: true }
+      : r
+  )
+);
+};
   // 🔵 guarda localmente que foi enviado
   const updated = results.map(r =>
     r.ref3 === item.ref3 && r.email === item.email
@@ -425,7 +432,8 @@ if (mode === 'ATRASO') {
     const blob = generateEMLBlob(item);
     // Download the EML file - opening it will trigger the default email client (Outlook)
     saveAs(blob, `DRAFT_V${item.ref3}_${item.vendedor.replace(/\s+/g, '_')}.eml`);
-    markAsSent(`${item.ref3}_${item.email}`);
+    markAsSent({ref3: item.ref3 || item.REF3,email: item.email});
+
   };
 
   const downloadEML = (item: GroupedData) => {
