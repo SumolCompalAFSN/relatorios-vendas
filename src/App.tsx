@@ -494,8 +494,8 @@ if (mode === 'ATRASO') {
             <div className="w-6 h-6 border-2 border-[#0A6ED1] flex items-center justify-center font-bold text-[10px] text-[#0A6ED1]">SAP</div>
           </div>
           <h1 className="text-white font-semibold text-lg tracking-tight italic flex items-center">
-            Relatório PA’s Transportes 
-            <span className="font-normal opacity-70 ml-2 text-xs not-italic border-l border-white/20 pl-2">v2.4.0</span>
+            RVV — Relatórios Valores Vendas 
+            <span className="font-normal opacity-70 ml-2 text-xs not-italic border-l border-white/20 pl-2">v3.5.0</span>
           </h1>
         </div>
         
