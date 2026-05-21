@@ -672,10 +672,9 @@ if (mode === 'ATRASO') {
             
             {!loading && results.length === 0 && (
               <div className="h-full flex flex-col items-center justify-center text-gray-400">
-                <FileSpreadsheet size={48} className="opacity-10 mb-4" />
-                <p className="text-sm">Inicie o processamento carregando um ficheiro SAP.</p>
-                <p className="text-[10px] opacity-70">Detectamos automaticamente o cabeçalho na linha 5 ou via palavras-chave.</p>
-              </div>
+                <FileSpreadsheet size={48} className="opacity-5 mb-4" />
+                <p className="text-sm">Inicie o processamento carregando o ficheiro excell.</p>
+             </div>
             )}
 
             {!loading && results.map((item, idx) => (
