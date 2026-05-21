@@ -528,7 +528,7 @@ if (mode === 'ATRASO') {
             </button>
           </div>
           <div className="hidden md:flex items-center space-x-2">
-            <span className="opacity-80 text-xs">AFSN Equipa</span>
+            <span className="opacity-80 text-xs">Equipa AFSN</span>
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-xs ring-1 ring-white/10">AF</div>
           </div>
         </div>
