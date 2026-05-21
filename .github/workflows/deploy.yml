@@ -27,7 +27,6 @@ jobs:
           rm -rf node_modules
           npm install
 
-
       - name: Build
         run: npm run build
 
