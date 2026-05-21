@@ -22,7 +22,11 @@ jobs:
           node-version: 18
 
       - name: Instalar dependências
-        run: npm install
+        run: |
+          rm -f package-lock.json
+          rm -rf node_modules
+          npm install
+
 
       - name: Build
         run: npm run build
