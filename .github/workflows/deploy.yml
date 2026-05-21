@@ -20,12 +20,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
 
-      - name: Limpar e instalar dependências
+      - name: Limpar dependências
         run: |
-          rm -rf node_modules
-          rm -f package-lock.json
-          npm install --legacy-peer-deps
+          rm -rf node_modules package-lock.json
+
+      - name: Instalar dependências (force clean)
+        run: npm install --no-optional
 
       - name: Build
         run: npm run build
