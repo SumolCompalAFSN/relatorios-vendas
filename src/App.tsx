@@ -88,18 +88,20 @@ useEffect(() => {
 
 // 🔵 ✅ NOVA FUNÇÃO — ATUALIZAR RANKING
 const atualizarRanking = (ref: string) => {
-  const copia = [...ranking];
+  if (!ref) return;
 
-  const index = copia.findIndex(r => r.ref === ref);
+  const refStr = String(ref).padStart(3, "0"); // ✅ garante 009
+
+  const copia = [...ranking];
+  const index = copia.findIndex(r => r.ref === refStr);
 
   if (index >= 0) {
     copia[index].count += 1;
   } else {
-    copia.push({ ref, count: 1 });
+    copia.push({ ref: refStr, count: 1 });
   }
 
   setRanking(copia);
-
   localStorage.setItem("app_ranking", JSON.stringify(copia));
 };
 
@@ -739,7 +741,7 @@ if (mode === 'ATRASO') {
                     onClick={() => {
   console.log(item); // 👈 adiciona isto
   openEmail(item);
-  atualizarRanking(item.ref3);
+  atualizarRanking(item.ref3 || item.REF3);
 }}
                     className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition"
                   >
