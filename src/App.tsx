@@ -721,9 +721,12 @@ if (mode === 'ATRASO') {
                   </button>
                   <button 
                     onClick={() => {
-                    openEmail(item);
-                    atualizarRanking(item.ref3);
-                }}
+  console.log(item);
+
+  atualizarRanking(item.ref3); // ✅ primeiro
+  openEmail(item);             // ✅ depois
+}}
+
                     className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition"
                   >
                     Enviar E-Mail
