@@ -739,10 +739,9 @@ if (mode === 'ATRASO') {
                   </button>
                   <button 
                     onClick={() => {
-  console.log("REF3:", item.ref3);  // 👉 ver valor real
-  openEmail(item);
-  atualizarRanking(item.ref3);
-}}
+                    openEmail(item);
+                    atualizarRanking(item.ref3);
+                }}
                     className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition"
                   >
                     Enviar E-Mail
@@ -800,7 +799,7 @@ if (mode === 'ATRASO') {
                 <ul className="text-xs space-y-3">
                   {ranking.length === 0 && <li className="text-gray-400 italic">Sem dados...</li>}
                   {ranking.slice().sort((a, b) => b.count - a.count).slice(0, 8).map((s, idx) => {
-                    const normalizedRef = String(s.ref3).replace(/\D/g, "").padStart(3, "0");
+                    const normalizedRef = String(s.ref).replace(/\D/g, "").padStart(3, "0");
                     const vendor = emails[normalizedRef];
                     const displayName = vendor ? `${normalizedRef} - ${vendor.nome}` : normalizedRef;
                     
