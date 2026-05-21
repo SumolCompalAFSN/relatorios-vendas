@@ -360,22 +360,7 @@ if (mode === 'ATRASO') {
   )
 );
 };
-  // 🔵 guarda localmente que foi enviado
-  const updated = results.map(r =>
-    r.ref3 === item.ref3 && r.email === item.email
-      ? { ...r, enviado: true }
-      : r
-  );
-
-  // ⚠️ só atualiza se results existir
-  if (typeof setResults === "function") {
-    setResults(updated);
-  }
-
-  // 🔵 fallback: guardar no localStorage (opcional)
-  localStorage.setItem("sent_items", JSON.stringify(updated));
-};
-
+  
   const generateEMLBlob = (item: GroupedData) => {
     const html = mode === 'ATRASO' ? buildHtmlEmailAtrasos({
       vendedor: item.vendedor,
