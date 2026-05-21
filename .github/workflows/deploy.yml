@@ -20,17 +20,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      - name: Limpar dependências
-        run: |
-          rm -rf node_modules package-lock.json
+      - name: Ativar Corepack (Yarn)
+        run: corepack enable
 
-      - name: Instalar dependências (force clean)
-        run: npm install --no-optional
+      - name: Instalar dependências com Yarn
+        run: yarn install
 
       - name: Build
-        run: npm run build
+        run: yarn build
 
       - name: Deploy para gh-pages
         uses: peaceiris/actions-gh-pages@v4
