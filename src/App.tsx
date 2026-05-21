@@ -351,9 +351,13 @@ if (mode === 'ATRASO') {
   };
 
   const markAsSent = (key: string) => {
-  const item = results.find(r => `${r.ref3}_${r.email}` === key);
-  if (!item || item.enviado) return;
-  
+  setResults(prev =>
+    prev.map(r =>
+      `${r.ref3}_${r.email}` === key
+        ? { ...r, enviado: true }
+        : r
+    )
+  );
 };
 
   const generateEMLBlob = (item: GroupedData) => {
