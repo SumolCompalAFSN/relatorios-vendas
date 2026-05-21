@@ -492,9 +492,11 @@ if (mode === 'ATRASO') {
       {/*  Style Header */}
       <header className="h-14 bg-[#0A6ED1] flex items-center justify-between px-6 shrink-0 shadow-md z-10">
         <div className="flex items-center space-x-4">
-          <div className="bg-white p-1 rounded-sm shadow-sm ring-1 ring-black/5">
-            <div className="w-6 h-6 flex items-center justify-center">
-  <img src={rvvIcon} alt="RVV" className="w-8 h-8 object-contain" />
+        <img
+  src={rvvIcon} 
+  alt="RVV" 
+  className="w-8 h-8 object-contain"
+/>  
 </div>
           </div>
           <h1 className="text-white font-semibold text-lg tracking-tight italic flex items-center">
