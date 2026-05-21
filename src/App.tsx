@@ -352,13 +352,13 @@ if (mode === 'ATRASO') {
   const item = results.find(r => `${r.ref3}_${r.email}` === key);
   if (!item || item.enviado) return;
 
-  setResults(prev =>
-    prev.map(r =>
-      `${r.ref3}_${r.email}` === key
-        ? { ...r, enviado: true }
-        : r
-    )
-  );
+  // setResults(prev =>
+//   prev.map(r =>
+//     `${r.ref3}_${r.email}` === key
+//       ? { ...r, enviado: true }
+//       : r
+//   )
+// );
 
   setRanking(prev => {
     const copy = [...prev];
