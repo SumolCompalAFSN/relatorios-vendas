@@ -350,20 +350,23 @@ if (mode === 'ATRASO') {
     }
   };
 
-  const markAsSent = (key: string) => {
-  console.log("KEY:", key);
+  const markAsSent = (item: GroupedData) => {
+  console.log("Marcar como enviado:", item.ref3);
 
-  setResults(prev => {
-    const updated = prev.map(r =>
-      `${r.ref3}_${r.email}` === key
-        ? { ...r, enviado: true }
-        : r
-    );
+  // 🔵 guarda localmente que foi enviado
+  const updated = results.map(r =>
+    r.ref3 === item.ref3 && r.email === item.email
+      ? { ...r, enviado: true }
+      : r
+  );
 
-    console.log("UPDATED RESULTS:", updated); // 👈 AQUI
+  // ⚠️ só atualiza se results existir
+  if (typeof setResults === "function") {
+    setResults(updated);
+  }
 
-    return updated;
-  });
+  // 🔵 fallback: guardar no localStorage (opcional)
+  localStorage.setItem("sent_items", JSON.stringify(updated));
 };
 
   const generateEMLBlob = (item: GroupedData) => {
