@@ -362,20 +362,7 @@ if (mode === 'ATRASO') {
 //   )
 // );
 
-  setRanking(prev => {
-    const copy = [...prev];
-    const idx = copy.findIndex(r => r.ref === item.ref3); // ✅ CORRIGIDO
-
-    if (idx >= 0) {
-      copy[idx].count = (copy[idx].count || 0) + 1;
-    } else {
-      copy.push({ ref: item.ref3, count: 1 }); // ✅ CORRIGIDO
-    }
-
-    localStorage.setItem("app_ranking", JSON.stringify(copy)); // ✅ faltava isto
-
-    return copy;
-  });
+  
 };
 
   const generateEMLBlob = (item: GroupedData) => {
