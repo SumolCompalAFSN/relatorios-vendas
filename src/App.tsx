@@ -69,7 +69,9 @@ export default function App() {
   const [resultsDiferenca, setResultsDiferenca] = useState<GroupedData[]>([]);
   const [importModal, setImportModal] = useState(false);
   const [ranking, setRanking] = useState<any[]>([]);
-  useEffect(() => {
+
+// 🔵 Carregar ranking do localStorage
+useEffect(() => {
   const saved = localStorage.getItem("app_ranking");
 
   if (saved) {
@@ -82,29 +84,44 @@ export default function App() {
       console.error("Erro ao carregar ranking:", e);
     }
   }
-}, []); 
-  
-  // Reset apenas do ranking
+}, []);
+
+// 🔵 ✅ NOVA FUNÇÃO — ATUALIZAR RANKING
+const atualizarRanking = (ref: string) => {
+  const copia = [...ranking];
+
+  const index = copia.findIndex(r => r.ref === ref);
+
+  if (index >= 0) {
+    copia[index].count += 1;
+  } else {
+    copia.push({ ref, count: 1 });
+  }
+
+  setRanking(copia);
+
+  localStorage.setItem("app_ranking", JSON.stringify(copia));
+};
+
+// 🔵 Reset apenas do ranking
 const handleResetRanking = () => {
 
   console.log("RESET RANKING ✅");
 
-  // ✅ limpar apenas ranking
   localStorage.removeItem('app_ranking');
-
-  // ✅ limpar estado do ranking (UI)
   setRanking([]);
 };
 
-  const handleResetAll = () => {
-    if (confirm("Deseja limpar todos os dados? Esta ação é irreversível e apagará o histórico, e-mails e resultados atuais.")) {
-      localStorage.clear();
-      setResults([]);
-      setRanking([]);
-      setEmails(EMAILS_DEFAULT);
-      alert("Sistema restaurado para o estado inicial.");
-    }
-  };
+// 🔵 Reset total
+const handleResetAll = () => {
+  if (confirm("Deseja limpar todos os dados? Esta ação é irreversível e apagará o histórico, e-mails e resultados atuais.")) {
+    localStorage.clear();
+    setResults([]);
+    setRanking([]);
+    setEmails(EMAILS_DEFAULT);
+    alert("Sistema restaurado para o estado inicial.");
+  }
+};
 
   const results = mode === 'ATRASO'
   ? resultsAtraso
@@ -717,7 +734,10 @@ if (mode === 'ATRASO') {
                     PDF
                   </button>
                   <button 
-                    onClick={() => openEmail(item)}
+                    onClick={() => {
+  openEmail(item);
+  atualizarRanking(item.ref3);
+}}
                     className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition"
                   >
                     Enviar E-Mail
