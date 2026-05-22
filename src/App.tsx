@@ -468,11 +468,25 @@ if (mode === 'ATRASO') {
     // ✅ NOVO — incrementa ranking para todos
     
 results.forEach(item => {
-  if (!item.sent) {
-    markAsSent(item);
-  }
+  setRanking(prev => {
+    const existing = prev.find(r => r.ref === item.ref);
+
+    if (existing) {
+      return prev.map(r =>
+        r.ref === item.ref
+          ? { ...r, count: r.count + 1 }
+          : r
+      );
+    } else {
+      return [...prev, { ref: item.ref, count: 1 }];
+    }
+  });
 });
 
+    // ✅ Marca todos como enviados
+    setResults(prev =>
+  prev.map(item => ({ ...item, sent: true }))
+);
     
     // 1. Criar pastas no ZIP
     const pastaEmails = zip.folder("E-Mails");
