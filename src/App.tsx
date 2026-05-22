@@ -180,7 +180,7 @@ const handleResetAll = () => {
 
     setLoading(true);
     try {
-      const parsedData = await parseFile(file);
+      const parsedData = await parseSAPFile(file);
       console.log("📊 PARSED DATA:", parsedData);
       console.log("📊 TOTAL:", parsedData.length);
       
