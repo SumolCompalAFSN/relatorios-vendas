@@ -35,6 +35,7 @@ import { calcularDiasUteis } from './utils/dateUtils';
 import { EMAILS_DEFAULT, EmailConfig } from './data/emailsDefault';
 import { getRef3, formatCurrency, cn, parseSAPValue } from './lib/utils';
 import { buildHtmlEmailAtrasos, buildHtmlEmailDiferencas, generatePDF, EmailData } from './utils/emailUtils';
+const NETWORK_PATH = "Y:\S+C\negocio\MP-GC\7. Serviço Cliente\Crédito, Cobrança e Facturação\Facturação\PFTD\ranking_atual.xlsx";
 import rvvIcon from './assets/rvv-icon.png';
 
 
@@ -71,6 +72,12 @@ export default function App() {
   const [resultsDiferenca, setResultsDiferenca] = useState<GroupedData[]>([]);
   const [importModal, setImportModal] = useState(false);
   const [ranking, setRanking] = useState<any[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<string>("");
+
+useEffect(() => {
+  const saved = localStorage.getItem("ranking_last_update");
+  if (saved) setLastUpdate(saved);
+}, []);
 
 // 🔵 Carregar ranking do localStorage
 useEffect(() => {
@@ -85,6 +92,8 @@ useEffect(() => {
     } catch (e) {
       console.error("Erro ao carregar ranking:", e);
     }
+  } else {
+    alert("⚠️ Não existe ranking guardado.\n\nPor favor importe o ficheiro Excel do ranking.");
   }
 }, []);
 
@@ -855,7 +864,22 @@ if (mode === 'ATRASO') {
             <div className="space-y-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Ranking de Atividade</h3>
+  <h3 className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">
+    Ranking de Atividade
+  </h3>
+
+  <span
+    className="text-gray-400 text-xs cursor-help hover:text-[#0A6ED1]"
+    title={`Pasta de rede: ${NETWORK_PATH}`}
+  >
+    ?
+  </span>
+</div>
+                  {lastUpdate && (
+  <div className="text-[10px] text-gray-400 mt-1 text-right">
+    Última atualização: {lastUpdate}
+  </div>
+)}
                   <button 
                     onClick={handleResetRanking}
                     className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded hover:bg-red-50"
