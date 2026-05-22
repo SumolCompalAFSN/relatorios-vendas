@@ -904,7 +904,6 @@ if (mode === 'ATRASO') {
                   })}
                 </ul>
               </div>
-            </div>
           </aside>
         )}
       </div>
