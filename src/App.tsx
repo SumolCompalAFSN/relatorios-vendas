@@ -35,7 +35,7 @@ import { calcularDiasUteis } from './utils/dateUtils';
 import { EMAILS_DEFAULT, EmailConfig } from './data/emailsDefault';
 import { getRef3, formatCurrency, cn, parseSAPValue } from './lib/utils';
 import { buildHtmlEmailAtrasos, buildHtmlEmailDiferencas, generatePDF, EmailData } from './utils/emailUtils';
-const NETWORK_PATH = "Y:\S+C\negocio\MP-GC\7. Serviço Cliente\Crédito, Cobrança e Facturação\Facturação\PFTD\ranking_atual.xlsx";
+const NETWORK_PATH = "Y:/S+C/negocio/MP-GC/7. Serviço Cliente/Crédito, Cobrança e Facturação/Facturação/PFTD/RVV/ranking_atual.xlsx";
 import rvvIcon from './assets/rvv-icon.png';
 
 
