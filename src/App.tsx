@@ -890,7 +890,7 @@ if (mode === 'ATRASO') {
                 </div>
                 <ul className="text-xs space-y-3">
                   {ranking.length === 0 && <li className="text-gray-400 italic">Sem dados...</li>}
-                  {ranking.slice().sort((a, b) => b.count - a.count).slice(0, 8).map((s, idx) => {
+                  {ranking.slice().sort((a, b) => b.count - a.count).map((s, idx) => {
                     const normalizedRef = String(s.ref).replace(/\D/g, "").padStart(3, "0");
                     const vendor = emails[normalizedRef];
                     const displayName = vendor ? `${normalizedRef} - ${vendor.nome}` : normalizedRef;
