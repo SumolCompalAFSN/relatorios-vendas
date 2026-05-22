@@ -468,19 +468,23 @@ if (mode === 'ATRASO') {
     // ✅ NOVO — incrementa ranking para todos
     
 results.forEach(item => {
+
+  const ref = (item.referencia || item.ref || "").toString().padStart(3, "0");
+
   setRanking(prev => {
-    const existing = prev.find(r => r.ref === item.ref);
+    const existing = prev.find(r => r.ref === ref);
 
     if (existing) {
       return prev.map(r =>
-        r.ref === item.ref
+        r.ref === ref
           ? { ...r, count: r.count + 1 }
           : r
       );
     } else {
-      return [...prev, { ref: item.ref, count: 1 }];
+      return [...prev, { ref: ref, count: 1 }];
     }
   });
+
 });
 
     // ✅ Marca todos como enviados
