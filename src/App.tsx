@@ -35,6 +35,7 @@ import { calcularDiasUteis } from './utils/dateUtils';
 import { EMAILS_DEFAULT, EmailConfig } from './data/emailsDefault';
 import { getRef3, formatCurrency, cn, parseSAPValue } from './lib/utils';
 import { buildHtmlEmailAtrasos, buildHtmlEmailDiferencas, generatePDF, EmailData } from './utils/emailUtils';
+const NETWORK_PATH = "Y:/S+C/negocio/MP-GC/7. Serviço Cliente/Crédito, Cobrança e Facturação/Facturação/PFTD/RVV/ranking_atual.xlsx";
 import rvvIcon from './assets/rvv-icon.png';
 
 
@@ -71,6 +72,12 @@ export default function App() {
   const [resultsDiferenca, setResultsDiferenca] = useState<GroupedData[]>([]);
   const [importModal, setImportModal] = useState(false);
   const [ranking, setRanking] = useState<any[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<string>("");
+
+useEffect(() => {
+  const saved = localStorage.getItem("ranking_last_update");
+  if (saved) setLastUpdate(saved);
+}, []);
 
 // 🔵 Carregar ranking do localStorage
 useEffect(() => {
@@ -85,6 +92,8 @@ useEffect(() => {
     } catch (e) {
       console.error("Erro ao carregar ranking:", e);
     }
+  } else {
+    alert("⚠️ Não existe ranking guardado.\n\nPor favor importe o ficheiro Excel do ranking.");
   }
 }, []);
 
@@ -171,7 +180,7 @@ const handleResetAll = () => {
 
     setLoading(true);
     try {
-      const parsedData = await parseFile(file);
+      const parsedData = await parseSAPFile(file);
       console.log("📊 PARSED DATA:", parsedData);
       console.log("📊 TOTAL:", parsedData.length);
       
@@ -180,10 +189,10 @@ const handleResetAll = () => {
       }
 
       processData(parsedData);
-    } catch (err) {
-      console.error(err);
-      alert('Falha ao processar ficheiro . Verifique o formato.');
-    } finally {
+    } catch (err: any) {
+  console.error("ERRO DETALHADO:", err);
+  alert(`Erro ao processar ficheiro: ${err?.message || err}`);
+} finally {
       setLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
@@ -274,7 +283,7 @@ if (mode === 'ATRASO') {
           total: 0
         };
       }
-      const val = parseValue(row.valor || row['Montante em moeda interna'] || 0);
+      const val = parseSAPValue(row.valor || row['Montante em moeda interna'] || 0);
       groups[key].docs.push(row);
       groups[key].total += val;
     });
@@ -487,6 +496,56 @@ if (mode === 'ATRASO') {
     saveAs(content, `Relatorios_Completos.zip`);
   };
 
+  const exportRankingExcel = () => {
+  if (ranking.length === 0) {
+    alert("Não existem dados de ranking para exportar.");
+    return;
+  }
+
+  const data = ranking.map(r => ({
+    Codigo: r.ref,
+    Contador: r.count
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Ranking");
+
+  const now = new Date();
+  const fileName = `ranking_${now.toISOString().replace(/[:T]/g, '-').slice(0,16)}.xlsx`;
+
+  XLSX.writeFile(workbook, fileName);
+};
+
+  const handleImportRanking = async (e: ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  try {
+    const buffer = await file.arrayBuffer();
+    const workbook = XLSX.read(buffer);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows: any[] = XLSX.utils.sheet_to_json(sheet);
+
+    const imported = rows.map(row => ({
+      ref: String(row.Codigo || "").padStart(3, "0"),
+      count: Number(row.Contador || 0)
+    }));
+
+    setRanking(imported);
+    localStorage.setItem("app_ranking", JSON.stringify(imported));
+
+    const now = new Date().toLocaleString();
+    localStorage.setItem("ranking_last_update", now);
+
+    alert("Ranking importado com sucesso!");
+    
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao importar ranking.");
+  }
+};
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#F5F6F7] text-[#333] font-sans">
       {/*  Style Header */}
@@ -549,8 +608,28 @@ if (mode === 'ATRASO') {
           </label>
         </div>
         
-        <div className="flex space-x-2">
-        </div>
+        <div className="flex space-x-2 items-center">
+
+  {/* Export */}
+  <button
+    onClick={exportRankingExcel}
+    className="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded hover:bg-green-700"
+  >
+    Exportar Ranking
+  </button>
+
+  {/* Import */}
+  <label className="px-3 py-1.5 bg-gray-500 text-white text-xs font-bold rounded cursor-pointer hover:bg-gray-600">
+    Importar Ranking
+    <input
+      type="file"
+      accept=".xlsx"
+      onChange={handleImportRanking}
+      className="hidden"
+    />
+  </label>
+
+</div>
       </div>
 
       {/* Content Layout */}
@@ -785,7 +864,22 @@ if (mode === 'ATRASO') {
             <div className="space-y-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Ranking de Atividade</h3>
+  <h3 className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">
+    Ranking de Atividade
+  </h3>
+
+  <span
+    className="text-gray-400 text-xs cursor-help hover:text-[#0A6ED1]"
+    title={`Pasta de rede: ${NETWORK_PATH}`}
+  >
+    ?
+  </span>
+</div>
+                  {lastUpdate && (
+  <div className="text-[10px] text-gray-400 mt-1 text-right">
+    Última atualização: {lastUpdate}
+  </div>
+)}
                   <button 
                     onClick={handleResetRanking}
                     className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded hover:bg-red-50"
@@ -810,7 +904,6 @@ if (mode === 'ATRASO') {
                   })}
                 </ul>
               </div>
-            </div>
           </aside>
         )}
       </div>
