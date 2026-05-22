@@ -283,7 +283,7 @@ if (mode === 'ATRASO') {
           total: 0
         };
       }
-      const val = parseValue(row.valor || row['Montante em moeda interna'] || 0);
+      const val = parseSAPValue(row.valor || row['Montante em moeda interna'] || 0);
       groups[key].docs.push(row);
       groups[key].total += val;
     });
