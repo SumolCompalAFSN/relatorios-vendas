@@ -470,7 +470,7 @@ console.log("DEBUG RESULT 0:", data[0]);
 
 data.forEach(item => {
   
-  const ref = (item.referencia || item.ref || "").toString().padStart(3, "0");
+  const ref = item.ref3.toString().padStart(3, "0");
 
   setRanking(prev => {
     const existing = prev.find(r => r.ref === ref);
