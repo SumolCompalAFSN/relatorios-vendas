@@ -464,6 +464,34 @@ if (mode === 'ATRASO') {
 
   const downloadAllZip = async () => {
     const zip = new JSZip();
+    const data = mode === 'ATRASO' ? resultsAtraso : resultsDiferenca;
+
+console.log("DEBUG RESULT 0:", data[0]);
+
+data.forEach(item => {
+  
+  const ref = item.ref3.toString().padStart(3, "0");
+
+  setRanking(prev => {
+    const existing = prev.find(r => r.ref === ref);
+
+    if (existing) {
+      return prev.map(r =>
+        r.ref === ref
+          ? { ...r, count: r.count + 1 }
+          : r
+      );
+    } else {
+      return [...prev, { ref: ref, count: 1 }];
+    }
+  });
+
+});
+
+    // ✅ Marca todos como enviados
+    setResults(prev =>
+  prev.map(item => ({ ...item, sent: true }))
+);
     
     // 1. Criar pastas no ZIP
     const pastaEmails = zip.folder("E-Mails");
