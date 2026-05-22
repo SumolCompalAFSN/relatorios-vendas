@@ -599,8 +599,28 @@ if (mode === 'ATRASO') {
           </label>
         </div>
         
-        <div className="flex space-x-2">
-        </div>
+        <div className="flex space-x-2 items-center">
+
+  {/* Export */}
+  <button
+    onClick={exportRankingExcel}
+    className="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded hover:bg-green-700"
+  >
+    Exportar Ranking
+  </button>
+
+  {/* Import */}
+  <label className="px-3 py-1.5 bg-gray-500 text-white text-xs font-bold rounded cursor-pointer hover:bg-gray-600">
+    Importar Ranking
+    <input
+      type="file"
+      accept=".xlsx"
+      onChange={handleImportRanking}
+      className="hidden"
+    />
+  </label>
+
+</div>
       </div>
 
       {/* Content Layout */}
