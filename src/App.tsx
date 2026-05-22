@@ -189,10 +189,10 @@ const handleResetAll = () => {
       }
 
       processData(parsedData);
-    } catch (err) {
-      console.error(err);
-      alert('Falha ao processar ficheiro . Verifique o formato.');
-    } finally {
+    } catch (err: any) {
+  console.error("ERRO DETALHADO:", err);
+  alert(`Erro ao processar ficheiro: ${err?.message || err}`);
+} finally {
       setLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
