@@ -465,6 +465,15 @@ if (mode === 'ATRASO') {
   const downloadAllZip = async () => {
     const zip = new JSZip();
     
+    // ✅ NOVO — incrementa ranking para todos
+    
+results.forEach(item => {
+  if (!item.sent) {
+    markAsSent(item);
+  }
+});
+
+    
     // 1. Criar pastas no ZIP
     const pastaEmails = zip.folder("E-Mails");
     const pastaRelatorios = zip.folder("Relatórios");
