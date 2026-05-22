@@ -464,12 +464,12 @@ if (mode === 'ATRASO') {
 
   const downloadAllZip = async () => {
     const zip = new JSZip();
-    console.log("DEBUG RESULT 0:", results[0]);
-    
-    // ✅ NOVO — incrementa ranking para todos
-    
-results.forEach(item => {
+    const data = mode === 'ATRASO' ? resultsAtraso : resultsDiferenca;
 
+console.log("DEBUG RESULT 0:", data[0]);
+
+data.forEach(item => {
+  
   const ref = (item.referencia || item.ref || "").toString().padStart(3, "0");
 
   setRanking(prev => {
