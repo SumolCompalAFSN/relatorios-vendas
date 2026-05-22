@@ -673,7 +673,7 @@ if (mode === 'ATRASO') {
             {!loading && results.length === 0 && (
               <div className="h-full flex flex-col items-center justify-center text-gray-400">
                 <FileSpreadsheet size={48} className="opacity-30 mb-4" />
-                <p className="text-sm">Inicie o processamento carregando o ficheiro excell.</p>
+                <p className="text-sm">Inicie o processamento carregando os ficheiros Excell.</p>
              </div>
             )}
 
