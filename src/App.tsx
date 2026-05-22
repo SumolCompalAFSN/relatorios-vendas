@@ -487,6 +487,56 @@ if (mode === 'ATRASO') {
     saveAs(content, `Relatorios_Completos.zip`);
   };
 
+  const exportRankingExcel = () => {
+  if (ranking.length === 0) {
+    alert("Não existem dados de ranking para exportar.");
+    return;
+  }
+
+  const data = ranking.map(r => ({
+    Codigo: r.ref,
+    Contador: r.count
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Ranking");
+
+  const now = new Date();
+  const fileName = `ranking_${now.toISOString().replace(/[:T]/g, '-').slice(0,16)}.xlsx`;
+
+  XLSX.writeFile(workbook, fileName);
+};
+
+  const handleImportRanking = async (e: ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  try {
+    const buffer = await file.arrayBuffer();
+    const workbook = XLSX.read(buffer);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows: any[] = XLSX.utils.sheet_to_json(sheet);
+
+    const imported = rows.map(row => ({
+      ref: String(row.Codigo || "").padStart(3, "0"),
+      count: Number(row.Contador || 0)
+    }));
+
+    setRanking(imported);
+    localStorage.setItem("app_ranking", JSON.stringify(imported));
+
+    const now = new Date().toLocaleString();
+    localStorage.setItem("ranking_last_update", now);
+
+    alert("Ranking importado com sucesso!");
+    
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao importar ranking.");
+  }
+};
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#F5F6F7] text-[#333] font-sans">
       {/*  Style Header */}
