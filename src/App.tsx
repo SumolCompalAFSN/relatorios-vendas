@@ -464,6 +464,7 @@ if (mode === 'ATRASO') {
 
   const downloadAllZip = async () => {
     const zip = new JSZip();
+    console.log("DEBUG RESULT 0:", results[0]);
     
     // ✅ NOVO — incrementa ranking para todos
     
