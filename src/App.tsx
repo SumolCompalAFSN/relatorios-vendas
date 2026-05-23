@@ -869,7 +869,6 @@ data.forEach(item => {
                       <CheckCircle2 size={14} />
                     </button>
                   )}
-                </div>
               </motion.div>
             ))}
           </div>
