@@ -24,7 +24,16 @@ function formatDatePT(dateValue: any) {
 }
 
 export function buildHtmlEmailAtrasos(data: EmailData) {
-  const greeting = new Date().getHours() < 12 ? 'Bom dia' : 'Boa tarde';
+  
+const hour = new Date().getHours();
+
+const greeting =
+  hour < 13
+    ? 'Bom dia,'
+    : hour < 19
+      ? 'Boa tarde,'
+      : 'Boa noite,';
+
   
   const tableRows = data.docs.map(doc => {
     const dataVal = doc.data || doc.Data || doc['Data de lançamento'] || '';
