@@ -96,6 +96,16 @@ useEffect(() => {
     alert("⚠️ Não existe ranking guardado.\n\nPor favor importe o ficheiro Excel do ranking.");
   }
 }, []);
+  
+// 🔥 ✅ NOVO — REPROCESSAR DADOS QUANDO EMAILS MUDAM
+useEffect(() => {
+  if (results.length === 0) return;
+
+  const allData = results.flatMap(r => r.docs);
+  processData(allData);
+
+}, [emails]);
+
 
 // 🔵 ✅ NOVA FUNÇÃO — ATUALIZAR RANKING
 const atualizarRanking = (ref: string) => {
@@ -139,6 +149,9 @@ const handleResetAll = () => {
   const results = mode === 'ATRASO'
   ? resultsAtraso
   : resultsDiferenca;
+  const hasEmailsForAll =
+  results.length > 0 &&
+  results.every(item => emails[item.ref3]?.email);
 
   // Right panel calculations
   const allDocsForMetrics = results.flatMap(r => r.docs);
@@ -346,6 +359,8 @@ if (mode === 'ATRASO') {
       console.log("Parsed emails:", emailRecords);
       localStorage.setItem("emails_config", JSON.stringify(emailRecords));
       setEmails(emailRecords);
+      
+
       alert(`${Object.keys(emailRecords).length} vendedores importados com sucesso!`);
 
     } catch (err: any) {
@@ -755,11 +770,18 @@ data.forEach(item => {
             <div className="w-[120px] text-right">Valor Total</div>
             <div className="w-[180px] text-right pr-2 ml-auto flex flex-col items-end">
               <span>Ações Rápidas</span>
-              {results.length > 0 && (
-                <button 
-                  onClick={downloadAllZip}
-                  className="mt-1 flex items-center space-x-1 px-3 py-1 bg-[#0A6ED1] hover:bg-blue-700 text-white text-[9px] font-bold rounded shadow-sm transition"
-                >
+              {results.length > 0 && ( 
+                 <button
+  onClick={downloadAllZip}
+  disabled={!hasEmailsForAll}
+  title={
+    hasEmailsForAll
+      ? "Download ZIP"
+      : "Existem vendedores sem email configurado"
+  }
+  className="mt-1 flex items-center space-x-1 px-3 py-1 bg-[#0A6ED1] hover:bg-blue-700 text-white text-[9px] font-bold rounded shadow-sm transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+>
+
                   <Download size={10} />
                   <span>Download ZIP ({results.length})</span>
                 </button>
@@ -838,18 +860,36 @@ data.forEach(item => {
                     <Download size={14} />
                     PDF
                   </button>
-                  <button 
-                    onClick={() => {
-  console.log(item);
+                   <button
+  onClick={() => {
+    if (!emails[item.ref3]?.email) return;
 
-  atualizarRanking(item.ref3); // ✅ primeiro
-  openEmail(item);             // ✅ depois
-}}
+    atualizarRanking(item.ref3);
+    openEmail(item);
+  }}
+  disabled={!emails[item.ref3]?.email}
+  title={
+    emails[item.ref3]?.email
+      ? "Enviar email"
+      : "Email não configurado"
+  }
+  className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+>
+  Enviar E-Mail
+</button>
 
-                    className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition"
-                  >
-                    Enviar E-Mail
-                  </button>
+
+                  
+{/* ✅ NOVO — estado do email */}
+  {emails[item.ref3]?.email ? (
+  <CheckCircle2 size={16} className="text-green-500" />
+) : (
+  <AlertCircle size={16} className="text-red-500" />
+)}
+
+
+</div>
+
                   {!item.enviado && (
                     <button 
                       onClick={() => markAsSent(`${item.ref3}_${item.email}`)}
@@ -858,7 +898,6 @@ data.forEach(item => {
                       <CheckCircle2 size={14} />
                     </button>
                   )}
-                </div>
               </motion.div>
             ))}
           </div>
