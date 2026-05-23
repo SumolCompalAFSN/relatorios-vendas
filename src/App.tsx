@@ -767,8 +767,7 @@ data.forEach(item => {
             <div className="w-[120px] text-right">Valor Total</div>
             <div className="w-[180px] text-right pr-2 ml-auto flex flex-col items-end">
               <span>Ações Rápidas</span>
-              {results.length > 0 && (
-                <button 
+              {results.length > 0 && ( 
                  <button
   onClick={downloadAllZip}
   disabled={!Object.keys(emails).length}
