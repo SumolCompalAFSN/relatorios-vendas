@@ -129,7 +129,7 @@ const handleResetRanking = () => {
 const handleResetAll = () => {
   if (confirm("Deseja limpar todos os dados? Esta ação é irreversível e apagará o histórico, e-mails e resultados atuais.")) {
     localStorage.clear();
-    setResults([]);
+    setResultsAtraso([]);
     setRanking([]);
     setEmails(EMAILS_DEFAULT);
     alert("Sistema restaurado para o estado inicial.");
@@ -446,7 +446,7 @@ if (mode === 'ATRASO') {
   const downloadEML = (item: GroupedData) => {
     const blob = generateEMLBlob(item);
     saveAs(blob, `${mode}_V${item.ref3}.eml`);
-    markAsSent(`${item.ref3}_${item.email}`);
+    markAsSent(item);
   };
 
   const downloadPDF = async (item: GroupedData) => {
@@ -491,11 +491,6 @@ data.forEach(item => {
   markAsSent(item);
 
 });
-
-    // ✅ Marca todos como enviados
-    setResults(prev =>
-  prev.map(item => ({ ...item, sent: true }))
-);
     
     // 1. Criar pastas no ZIP
     const pastaEmails = zip.folder("E-Mails");
