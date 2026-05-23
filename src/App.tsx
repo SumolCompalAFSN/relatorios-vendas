@@ -850,6 +850,17 @@ data.forEach(item => {
                   >
                     Enviar E-Mail
                   </button>
+
+                  
+{/* ✅ NOVO — estado do email */}
+  {item.email ? (
+    <CheckCircle2 size={16} className="text-green-500" />
+  ) : (
+    <AlertCircle size={16} className="text-red-500" />
+  )}
+
+</div>
+
                   {!item.enviado && (
                     <button 
                       onClick={() => markAsSent(`${item.ref3}_${item.email}`)}
