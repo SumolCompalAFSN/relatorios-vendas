@@ -346,6 +346,13 @@ if (mode === 'ATRASO') {
       console.log("Parsed emails:", emailRecords);
       localStorage.setItem("emails_config", JSON.stringify(emailRecords));
       setEmails(emailRecords);
+      
+        // 🔥 NOVO — força atualização da UI
+      if (results.length > 0) {
+      const allData = results.flatMap(r => r.docs);
+      processData(allData);
+    }
+
       alert(`${Object.keys(emailRecords).length} vendedores importados com sucesso!`);
 
     } catch (err: any) {
@@ -838,26 +845,33 @@ data.forEach(item => {
                     <Download size={14} />
                     PDF
                   </button>
-                  <button 
-                    onClick={() => {
-  console.log(item);
+                   <button
+  onClick={() => {
+    if (!emails[item.ref3]?.email) return;
 
-  atualizarRanking(item.ref3); // ✅ primeiro
-  openEmail(item);             // ✅ depois
-}}
+    atualizarRanking(item.ref3);
+    openEmail(item);
+  }}
+  disabled={!emails[item.ref3]?.email}
+  title={
+    emails[item.ref3]?.email
+      ? "Enviar email"
+      : "Email não configurado"
+  }
+  className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+>
+  Enviar E-Mail
+</button>
 
-                    className="px-3 py-1.5 bg-[#0A6ED1] text-white text-[10px] font-bold rounded shadow-sm hover:bg-blue-700 transition"
-                  >
-                    Enviar E-Mail
-                  </button>
 
                   
 {/* ✅ NOVO — estado do email */}
-  {item.email ? (
-    <CheckCircle2 size={16} className="text-green-500" />
-  ) : (
-    <AlertCircle size={16} className="text-red-500" />
-  )}
+  {emails[item.ref3]?.email ? (
+  <CheckCircle2 size={16} className="text-green-500" />
+) : (
+  <AlertCircle size={16} className="text-red-500" />
+)}
+
 
 </div>
 
