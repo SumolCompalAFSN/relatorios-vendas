@@ -149,6 +149,9 @@ const handleResetAll = () => {
   const results = mode === 'ATRASO'
   ? resultsAtraso
   : resultsDiferenca;
+  const hasEmailsForAll =
+  results.length > 0 &&
+  results.every(item => emails[item.ref3]?.email);
 
   // Right panel calculations
   const allDocsForMetrics = results.flatMap(r => r.docs);
@@ -770,11 +773,11 @@ data.forEach(item => {
               {results.length > 0 && ( 
                  <button
   onClick={downloadAllZip}
-  disabled={!Object.keys(emails).length}
+  disabled={!hasEmailsForAll}
   title={
-    Object.keys(emails).length
+    hasEmailsForAll
       ? "Download ZIP"
-      : "Carregue a base de emails primeiro"
+      : "Existem vendedores sem email configurado"
   }
   className="mt-1 flex items-center space-x-1 px-3 py-1 bg-[#0A6ED1] hover:bg-blue-700 text-white text-[9px] font-bold rounded shadow-sm transition disabled:bg-gray-300 disabled:cursor-not-allowed"
 >
