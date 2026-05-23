@@ -96,6 +96,16 @@ useEffect(() => {
     alert("⚠️ Não existe ranking guardado.\n\nPor favor importe o ficheiro Excel do ranking.");
   }
 }, []);
+  
+// 🔥 ✅ NOVO — REPROCESSAR DADOS QUANDO EMAILS MUDAM
+useEffect(() => {
+  if (results.length === 0) return;
+
+  const allData = results.flatMap(r => r.docs);
+  processData(allData);
+
+}, [emails]);
+
 
 // 🔵 ✅ NOVA FUNÇÃO — ATUALIZAR RANKING
 const atualizarRanking = (ref: string) => {
@@ -347,11 +357,6 @@ if (mode === 'ATRASO') {
       localStorage.setItem("emails_config", JSON.stringify(emailRecords));
       setEmails(emailRecords);
       
-        // 🔥 NOVO — força atualização da UI
-      if (results.length > 0) {
-      const allData = results.flatMap(r => r.docs);
-      processData(allData);
-    }
 
       alert(`${Object.keys(emailRecords).length} vendedores importados com sucesso!`);
 
@@ -764,9 +769,17 @@ data.forEach(item => {
               <span>Ações Rápidas</span>
               {results.length > 0 && (
                 <button 
-                  onClick={downloadAllZip}
-                  className="mt-1 flex items-center space-x-1 px-3 py-1 bg-[#0A6ED1] hover:bg-blue-700 text-white text-[9px] font-bold rounded shadow-sm transition"
-                >
+                 <button
+  onClick={downloadAllZip}
+  disabled={!Object.keys(emails).length}
+  title={
+    Object.keys(emails).length
+      ? "Download ZIP"
+      : "Carregue a base de emails primeiro"
+  }
+  className="mt-1 flex items-center space-x-1 px-3 py-1 bg-[#0A6ED1] hover:bg-blue-700 text-white text-[9px] font-bold rounded shadow-sm transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+>
+
                   <Download size={10} />
                   <span>Download ZIP ({results.length})</span>
                 </button>
