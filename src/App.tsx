@@ -486,6 +486,10 @@ data.forEach(item => {
     }
   });
 
+  
+// ✅ NOVO — atualizar UI (botões)
+  markAsSent(item);
+
 });
 
     // ✅ Marca todos como enviados
