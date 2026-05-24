@@ -74,7 +74,7 @@ export default function App() {
   const [ranking, setRanking] = useState<any[]>([]);
   const [lastUpdate, setLastUpdate] = useState<string>("");
   const hasData = resultsAtraso.length > 0 || resultsDiferenca.length > 0;
-  const hasEmails = Object.keys(emails || {}).length > 0;
+  const hasEmails = localStorage.getItem("emails_config") !== null;
   const highlightEmails = !hasEmails;
   const highlightDados = hasEmails && !hasData;
   const highlightTabs = hasEmails && hasData;
