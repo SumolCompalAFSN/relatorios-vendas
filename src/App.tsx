@@ -74,6 +74,13 @@ export default function App() {
   const [ranking, setRanking] = useState<any[]>([]);
   const [lastUpdate, setLastUpdate] = useState<string>("");
   const hasData = resultsAtraso.length > 0 || resultsDiferenca.length > 0;
+  const hasEmails = Object.keys(emails || {}).length > 0;
+  const hasData = resultsAtraso.length > 0 || resultsDiferenca.length > 0;
+  const highlightEmails = !hasEmails;
+  const highlightDados = hasEmails && !hasData;
+  const highlightTabs = hasEmails && hasData;
+
+
 
 useEffect(() => {
   const saved = localStorage.getItem("ranking_last_update");
@@ -722,9 +729,12 @@ alert("Ranking importado com sucesso!");
   {/* ✅ Carregar Emails */}
   <button 
     onClick={() => setImportModal(true)}
-    className="px-3 py-1.5 rounded-md text-sm font-semibold 
-               bg-white/10 hover:bg-white/20 
-               text-white transition-all"
+    className={cn(
+  "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
+  highlightEmails
+    ? "bg-yellow-400 text-black animate-pulse"
+    : "bg-white/10 hover:bg-white/20 text-white"
+)}
   >
     Carregar Emails*
   </button>
@@ -733,11 +743,11 @@ alert("Ranking importado com sucesso!");
  
 <label
   className={cn(
-    "px-3 py-1.5 rounded-md text-sm font-semibold transition-all cursor-pointer",
-    hasData
-      ? "bg-white/10 hover:bg-white/20 text-white"
-      : "bg-yellow-400 text-black animate-pulse"
-  )}
+  "px-3 py-1.5 rounded-md text-sm font-semibold transition-all cursor-pointer",
+  highlightDados
+    ? "bg-yellow-400 text-black animate-pulse"
+    : "bg-white/10 hover:bg-white/20 text-white"
+)}
 >
 
     Carregar Dados
@@ -754,11 +764,13 @@ alert("Ranking importado com sucesso!");
   <button 
     onClick={() => setMode('ATRASO')}
     className={cn(
-      "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
-      mode === 'ATRASO'
-        ? "bg-white text-[#0A6ED1] shadow-md"
-        : "bg-white/10 hover:bg-white/20 text-white"
-    )}
+  "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
+  highlightTabs
+    ? "bg-green-500 text-white shadow-md"
+    : mode === 'ATRASO'
+      ? "bg-white text-[#0A6ED1] shadow-md"
+      : "bg-white/10 hover:bg-white/20 text-white"
+)}
   >
     Atrasos
   </button>
@@ -767,11 +779,13 @@ alert("Ranking importado com sucesso!");
   <button 
     onClick={() => setMode('DIFERENCA')}
     className={cn(
-      "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
-      mode === 'DIFERENCA'
-        ? "bg-white text-[#0A6ED1] shadow-md"
-        : "bg-white/10 hover:bg-white/20 text-white"
-    )}
+  "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
+  highlightTabs
+    ? "bg-green-500 text-white shadow-md"
+    : mode === 'DIFERENCA'
+      ? "bg-white text-[#0A6ED1] shadow-md"
+      : "bg-white/10 hover:bg-white/20 text-white"
+)}
   >
     Diferenças
   </button>
