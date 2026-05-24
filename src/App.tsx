@@ -241,36 +241,108 @@ const saData = data.filter(row =>
 );
 console.log("📊 Linhas SA encontradas:", saData.length);
 
-if (mode === 'ATRASO') {
-  const filtered = zdData.filter(row => {
-    const texto = String(row.texto || row['Texto'] || '').toUpperCase();
-    if (texto === 'EM ANÁLISE') return false;
-    if (texto.includes('PAG. TPA VENDEDOR')) return false;
+// ✅ ATRASOS (ZD)
+const filtered = zdData.filter(row => {
+  const texto = String(row.texto || row['Texto'] || '').toUpperCase();
+  if (texto === 'EM ANÁLISE') return false;
+  if (texto.includes('PAG. TPA VENDEDOR')) return false;
 
-    let dataLanc = row.data || row['Data de lançamento'];
-    if (!dataLanc) return false;
+  let dataLanc = row.data || row['Data de lançamento'];
+  if (!dataLanc) return false;
 
-    if (!(dataLanc instanceof Date)) {
-      dataLanc = new Date(dataLanc);
-    }
+  if (!(dataLanc instanceof Date)) {
+    dataLanc = new Date(dataLanc);
+  }
 
-    if (isNaN(dataLanc.getTime())) return false;
+  if (isNaN(dataLanc.getTime())) return false;
 
-    const dias = calcularDiasUteis(dataLanc, today);
-    row.diasUteis = dias;
-    return dias >= 2;
-  });
+  const dias = calcularDiasUteis(dataLanc, today);
+  row.diasUteis = dias;
+  return dias >= 2;
+});
 
-  console.log("✅ FILTRADOS:", filtered.length);
+console.log("✅ FILTRADOS ATRASO:", filtered.length);
 
-  groupAndSet(filtered);
+// ✅ DIFERENÇAS (SA)
+const diferencas = saData;
 
-} else {
-  console.log("👉 ENTROU EM DIFERENÇA");
+// ✅ AGRUPAR ATRASOS
+const groupsAtraso: Record<string, GroupedData> = {};
 
-  // ✅ USAR SA EM VEZ DE ZD
-  groupAndSet(saData);
-}
+filtered.forEach(row => {
+  let rawRef = row.referencia || row['Referência'] || '';
+  let ref3 = getRef3(rawRef);
+
+  if (ref3) {
+    ref3 = String(ref3).trim().replace(/\D/g, "").padStart(3, "0");
+  }
+
+  if (!ref3 || ref3 === "000") return;
+
+  const emailMap = emails[ref3];
+  const key = `${ref3}_${emailMap?.email || 'sem_email'}`;
+
+  if (!groupsAtraso[key]) {
+    groupsAtraso[key] = {
+      ref3,
+      vendedor: emailMap?.nome || ref3,
+      email: emailMap?.email || '',
+      emailGT: emailMap?.cc || '',
+      docs: [],
+      total: 0
+    };
+  }
+
+  const val = parseSAPValue(row.valor || row['Montante em moeda interna'] || 0);
+  groupsAtraso[key].docs.push(row);
+  groupsAtraso[key].total += val;
+});
+
+// ✅ AGRUPAR DIFERENÇAS
+const groupsDif: Record<string, GroupedData> = {};
+
+diferencas.forEach(row => {
+  let rawRef = row.referencia || row['Referência'] || '';
+  let ref3 = getRef3(rawRef);
+
+  if (ref3) {
+    ref3 = String(ref3).trim().replace(/\D/g, "").padStart(3, "0");
+  }
+
+  if (!ref3 || ref3 === "000") return;
+
+  const emailMap = emails[ref3];
+  const key = `${ref3}_${emailMap?.email || 'sem_email'}`;
+
+  if (!groupsDif[key]) {
+    groupsDif[key] = {
+      ref3,
+      vendedor: emailMap?.nome || ref3,
+      email: emailMap?.email || '',
+      emailGT: emailMap?.cc || '',
+      docs: [],
+      total: 0
+    };
+  }
+
+  const val = parseSAPValue(row.valor || row['Montante em moeda interna'] || 0);
+  groupsDif[key].docs.push(row);
+  groupsDif[key].total += val;
+});
+
+// ✅ ORDENAR (ATRASOS por dias)
+const finalAtraso = Object.values(groupsAtraso).sort((a, b) => {
+  const maxA = Math.max(...a.docs.map(d => d.diasUteis || 0));
+  const maxB = Math.max(...b.docs.map(d => d.diasUteis || 0));
+  return maxB - maxA;
+});
+
+// ✅ ORDENAR DIFERENÇAS (mantém por total)
+const finalDif = Object.values(groupsDif).sort((a, b) => b.total - a.total);
+
+// ✅ SET DOS DOIS AO MESMO TEMPO (ISTO RESOLVE TUDO 🔥)
+setResultsAtraso(finalAtraso);
+setResultsDiferenca(finalDif);
   };
 
   const groupAndSet = (data: any[]) => {
