@@ -484,27 +484,26 @@ if (mode === 'ATRASO') {
 console.log("DEBUG RESULT 0:", data[0]);
 
 data.forEach(item => {
-  
-  const ref = item.ref3.toString().padStart(3, "0");
 
-  setRanking(prev => {
-    const existing = prev.find(r => r.ref === ref);
+  if (mode === 'ATRASO') {
+    const ref = item.ref3.toString().padStart(3, "0");
 
-    if (existing) {
-      return prev.map(r =>
-        r.ref === ref
-          ? { ...r, count: r.count + 1 }
-          : r
-      );
-    } else {
-      return [...prev, { ref: ref, count: 1 }];
-    }
-  });
+    setRanking(prev => {
+      const existing = prev.find(r => r.ref === ref);
 
-  
-// ✅ NOVO — atualizar UI (botões)
+      if (existing) {
+        return prev.map(r =>
+          r.ref === ref
+            ? { ...r, count: r.count + 1 }
+            : r
+        );
+      } else {
+        return [...prev, { ref, count: 1 }];
+      }
+    });
+  }
+
   markAsSent(item);
-
 });
     
     // 1. Criar pastas no ZIP
@@ -864,7 +863,9 @@ data.forEach(item => {
   onClick={() => {
     if (!emails[item.ref3]?.email) return;
 
-    atualizarRanking(item.ref3);
+    if (mode === 'ATRASO') {
+  atualizarRanking(item.ref3);
+}
     openEmail(item);
   }}
   disabled={!emails[item.ref3]?.email}
