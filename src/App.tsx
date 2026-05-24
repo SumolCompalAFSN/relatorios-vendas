@@ -762,14 +762,17 @@ alert("Ranking importado com sucesso!");
   {/* ✅ Atrasos */}
   <button 
     onClick={() => setMode('ATRASO')}
-    className={cn(
+   className={cn(
   "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
   highlightTabs
-    ? "bg-green-500 text-white shadow-md"
+    ? mode === 'ATRASO'
+      ? "bg-green-700 text-white underline shadow-md"
+      : "bg-green-500 text-white"
     : mode === 'ATRASO'
       ? "bg-white text-[#0A6ED1] shadow-md"
       : "bg-white/10 hover:bg-white/20 text-white"
 )}
+    
   >
     Atrasos
   </button>
@@ -777,10 +780,12 @@ alert("Ranking importado com sucesso!");
   {/* ✅ Diferenças */}
   <button 
     onClick={() => setMode('DIFERENCA')}
-    className={cn(
+   className={cn(
   "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
   highlightTabs
-    ? "bg-green-500 text-white shadow-md"
+    ? mode === 'DIFERENCA'
+      ? "bg-green-700 text-white underline shadow-md"
+      : "bg-green-500 text-white"
     : mode === 'DIFERENCA'
       ? "bg-white text-[#0A6ED1] shadow-md"
       : "bg-white/10 hover:bg-white/20 text-white"
