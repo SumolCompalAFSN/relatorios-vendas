@@ -644,32 +644,51 @@ alert("Ranking importado com sucesso!");
         </div>
         
         <div className="flex items-center space-x-6 text-white text-sm">
-          <div className="flex space-x-4 border-r border-white/20 pr-6">
-            <button 
-              onClick={() => { setMode('ATRASO'); setResults([]); }}
-              className={cn(
-                "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
-                mode === 'ATRASO' ? "border-b-2 border-white opacity-100" : "opacity-60"
-              )}
-            >
-              Atrasos
-            </button>
-            <button 
-              onClick={() => { setMode('DIFERENCA'); setResults([]); }}
-              className={cn(
-                "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
-                mode === 'DIFERENCA' ? "border-b-2 border-white opacity-100" : "opacity-60"
-              )}
-            >
-              Diferenças
-            </button>
-            <button 
-              onClick={() => setImportModal(true)}
-              className="opacity-60 hover:opacity-100 font-medium pb-1 transition-all"
-            >
-              Carregar BD E-Mails
-            </button>
-          </div>
+          <div className="flex items-center space-x-6 border-r border-white/20 pr-6">
+
+  {/* ✅ Carregar Emails */}
+  <button 
+    onClick={() => setImportModal(true)}
+    className="opacity-60 hover:opacity-100 font-medium pb-1 transition-all"
+  >
+    Carregar Emails*
+  </button>
+
+  {/* ✅ Carregar Dados */}
+  <label className="opacity-60 hover:opacity-100 font-medium pb-1 transition-all cursor-pointer">
+    Carregar Dados
+    <input 
+      type="file" 
+      className="hidden" 
+      accept=".xlsx,.xls,.html" 
+      onChange={handleFileChange} 
+      ref={fileInputRef} 
+    />
+  </label>
+
+  {/* ✅ Atrasos */}
+  <button 
+    onClick={() => setMode('ATRASO')}
+    className={cn(
+      "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
+      mode === 'ATRASO' ? "border-b-2 border-white opacity-100" : "opacity-60"
+    )}
+  >
+    Atrasos
+  </button>
+
+  {/* ✅ Diferenças */}
+  <button 
+    onClick={() => setMode('DIFERENCA')}
+    className={cn(
+      "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
+      mode === 'DIFERENCA' ? "border-b-2 border-white opacity-100" : "opacity-60"
+    )}
+  >
+    Diferenças
+  </button>
+
+</div>
           <div className="hidden md:flex items-center space-x-2">
             <span className="opacity-80 text-xs">Equipa AFSN</span>
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-xs ring-1 ring-white/10">AF</div>
@@ -679,18 +698,6 @@ alert("Ranking importado com sucesso!");
 
       {/* Top Action Bar */}
       <div className="h-20 bg-white border-b border-gray-200 flex items-center px-6 justify-between shadow-sm shrink-0">
-        <div className="flex items-center space-x-4">
-          <label className="border-2 border-dashed border-[#0A6ED1]/40 bg-[#0A6ED1]/5 rounded px-4 py-2 flex items-center space-x-3 cursor-pointer hover:bg-[#0A6ED1]/10 transition-colors group">
-             <FileSpreadsheet size={20} className="text-[#0A6ED1]" />
-             <div>
-               <p className="text-[10px] uppercase font-bold text-[#0A6ED1]">Carregar</p>
-               <p className="text-xs font-semibold text-slate-600">
-                 export.xlsx
-               </p>
-             </div>
-             <input type="file" className="hidden" accept=".xlsx,.xls,.html" onChange={handleFileChange} ref={fileInputRef} />
-          </label>
-        </div>
         
         <div className="flex space-x-2 items-center">
 
