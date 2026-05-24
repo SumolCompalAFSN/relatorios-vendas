@@ -73,6 +73,7 @@ export default function App() {
   const [importModal, setImportModal] = useState(false);
   const [ranking, setRanking] = useState<any[]>([]);
   const [lastUpdate, setLastUpdate] = useState<string>("");
+  const hasData = resultsAtraso.length > 0 || resultsDiferenca.length > 0;
 
 useEffect(() => {
   const saved = localStorage.getItem("ranking_last_update");
@@ -729,9 +730,16 @@ alert("Ranking importado com sucesso!");
   </button>
 
   {/* ✅ Carregar Dados */}
-  <label className="px-3 py-1.5 rounded-md text-sm font-semibold 
-                    bg-white/10 hover:bg-white/20 
-                    text-white cursor-pointer transition-all">
+ 
+<label
+  className={cn(
+    "px-3 py-1.5 rounded-md text-sm font-semibold transition-all cursor-pointer",
+    hasData
+      ? "bg-white/10 hover:bg-white/20 text-white"
+      : "bg-yellow-400 text-black animate-pulse"
+  )}
+>
+
     Carregar Dados
     <input 
       type="file" 
