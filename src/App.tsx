@@ -716,18 +716,22 @@ alert("Ranking importado com sucesso!");
         </div>
         
         <div className="flex items-center space-x-6 text-white text-sm">
-          <div className="flex items-center space-x-6 border-r border-white/20 pr-6">
+          <div className="flex items-center space-x-4 border-r border-white/20 pr-6">
 
   {/* ✅ Carregar Emails */}
   <button 
     onClick={() => setImportModal(true)}
-    className="opacity-60 hover:opacity-100 font-medium pb-1 transition-all"
+    className="px-3 py-1.5 rounded-md text-sm font-semibold 
+               bg-white/10 hover:bg-white/20 
+               text-white transition-all"
   >
     Carregar Emails*
   </button>
 
   {/* ✅ Carregar Dados */}
-  <label className="opacity-60 hover:opacity-100 font-medium pb-1 transition-all cursor-pointer">
+  <label className="px-3 py-1.5 rounded-md text-sm font-semibold 
+                    bg-white/10 hover:bg-white/20 
+                    text-white cursor-pointer transition-all">
     Carregar Dados
     <input 
       type="file" 
@@ -742,8 +746,10 @@ alert("Ranking importado com sucesso!");
   <button 
     onClick={() => setMode('ATRASO')}
     className={cn(
-      "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
-      mode === 'ATRASO' ? "border-b-2 border-white opacity-100" : "opacity-60"
+      "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
+      mode === 'ATRASO'
+        ? "bg-white text-[#0A6ED1] shadow-md"
+        : "bg-white/10 hover:bg-white/20 text-white"
     )}
   >
     Atrasos
@@ -753,14 +759,17 @@ alert("Ranking importado com sucesso!");
   <button 
     onClick={() => setMode('DIFERENCA')}
     className={cn(
-      "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
-      mode === 'DIFERENCA' ? "border-b-2 border-white opacity-100" : "opacity-60"
+      "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
+      mode === 'DIFERENCA'
+        ? "bg-white text-[#0A6ED1] shadow-md"
+        : "bg-white/10 hover:bg-white/20 text-white"
     )}
   >
     Diferenças
   </button>
 
 </div>
+
           <div className="hidden md:flex items-center space-x-2">
             <span className="opacity-80 text-xs">Equipa AFSN</span>
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-xs ring-1 ring-white/10">AF</div>
