@@ -241,36 +241,108 @@ const saData = data.filter(row =>
 );
 console.log("📊 Linhas SA encontradas:", saData.length);
 
-if (mode === 'ATRASO') {
-  const filtered = zdData.filter(row => {
-    const texto = String(row.texto || row['Texto'] || '').toUpperCase();
-    if (texto === 'EM ANÁLISE') return false;
-    if (texto.includes('PAG. TPA VENDEDOR')) return false;
+// ✅ ATRASOS (ZD)
+const filtered = zdData.filter(row => {
+  const texto = String(row.texto || row['Texto'] || '').toUpperCase();
+  if (texto === 'EM ANÁLISE') return false;
+  if (texto.includes('PAG. TPA VENDEDOR')) return false;
 
-    let dataLanc = row.data || row['Data de lançamento'];
-    if (!dataLanc) return false;
+  let dataLanc = row.data || row['Data de lançamento'];
+  if (!dataLanc) return false;
 
-    if (!(dataLanc instanceof Date)) {
-      dataLanc = new Date(dataLanc);
-    }
+  if (!(dataLanc instanceof Date)) {
+    dataLanc = new Date(dataLanc);
+  }
 
-    if (isNaN(dataLanc.getTime())) return false;
+  if (isNaN(dataLanc.getTime())) return false;
 
-    const dias = calcularDiasUteis(dataLanc, today);
-    row.diasUteis = dias;
-    return dias >= 2;
-  });
+  const dias = calcularDiasUteis(dataLanc, today);
+  row.diasUteis = dias;
+  return dias >= 2;
+});
 
-  console.log("✅ FILTRADOS:", filtered.length);
+console.log("✅ FILTRADOS ATRASO:", filtered.length);
 
-  groupAndSet(filtered);
+// ✅ DIFERENÇAS (SA)
+const diferencas = saData;
 
-} else {
-  console.log("👉 ENTROU EM DIFERENÇA");
+// ✅ AGRUPAR ATRASOS
+const groupsAtraso: Record<string, GroupedData> = {};
 
-  // ✅ USAR SA EM VEZ DE ZD
-  groupAndSet(saData);
-}
+filtered.forEach(row => {
+  let rawRef = row.referencia || row['Referência'] || '';
+  let ref3 = getRef3(rawRef);
+
+  if (ref3) {
+    ref3 = String(ref3).trim().replace(/\D/g, "").padStart(3, "0");
+  }
+
+  if (!ref3 || ref3 === "000") return;
+
+  const emailMap = emails[ref3];
+  const key = `${ref3}_${emailMap?.email || 'sem_email'}`;
+
+  if (!groupsAtraso[key]) {
+    groupsAtraso[key] = {
+      ref3,
+      vendedor: emailMap?.nome || ref3,
+      email: emailMap?.email || '',
+      emailGT: emailMap?.cc || '',
+      docs: [],
+      total: 0
+    };
+  }
+
+  const val = parseSAPValue(row.valor || row['Montante em moeda interna'] || 0);
+  groupsAtraso[key].docs.push(row);
+  groupsAtraso[key].total += val;
+});
+
+// ✅ AGRUPAR DIFERENÇAS
+const groupsDif: Record<string, GroupedData> = {};
+
+diferencas.forEach(row => {
+  let rawRef = row.referencia || row['Referência'] || '';
+  let ref3 = getRef3(rawRef);
+
+  if (ref3) {
+    ref3 = String(ref3).trim().replace(/\D/g, "").padStart(3, "0");
+  }
+
+  if (!ref3 || ref3 === "000") return;
+
+  const emailMap = emails[ref3];
+  const key = `${ref3}_${emailMap?.email || 'sem_email'}`;
+
+  if (!groupsDif[key]) {
+    groupsDif[key] = {
+      ref3,
+      vendedor: emailMap?.nome || ref3,
+      email: emailMap?.email || '',
+      emailGT: emailMap?.cc || '',
+      docs: [],
+      total: 0
+    };
+  }
+
+  const val = parseSAPValue(row.valor || row['Montante em moeda interna'] || 0);
+  groupsDif[key].docs.push(row);
+  groupsDif[key].total += val;
+});
+
+// ✅ ORDENAR (ATRASOS por dias)
+const finalAtraso = Object.values(groupsAtraso).sort((a, b) => {
+  const maxA = Math.max(...a.docs.map(d => d.diasUteis || 0));
+  const maxB = Math.max(...b.docs.map(d => d.diasUteis || 0));
+  return maxB - maxA;
+});
+
+// ✅ ORDENAR DIFERENÇAS (mantém por total)
+const finalDif = Object.values(groupsDif).sort((a, b) => b.total - a.total);
+
+// ✅ SET DOS DOIS AO MESMO TEMPO (ISTO RESOLVE TUDO 🔥)
+setResultsAtraso(finalAtraso);
+setResultsDiferenca(finalDif);
   };
 
   const groupAndSet = (data: any[]) => {
@@ -644,32 +716,51 @@ alert("Ranking importado com sucesso!");
         </div>
         
         <div className="flex items-center space-x-6 text-white text-sm">
-          <div className="flex space-x-4 border-r border-white/20 pr-6">
-            <button 
-              onClick={() => { setMode('ATRASO'); setResults([]); }}
-              className={cn(
-                "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
-                mode === 'ATRASO' ? "border-b-2 border-white opacity-100" : "opacity-60"
-              )}
-            >
-              Atrasos
-            </button>
-            <button 
-              onClick={() => { setMode('DIFERENCA'); setResults([]); }}
-              className={cn(
-                "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
-                mode === 'DIFERENCA' ? "border-b-2 border-white opacity-100" : "opacity-60"
-              )}
-            >
-              Diferenças
-            </button>
-            <button 
-              onClick={() => setImportModal(true)}
-              className="opacity-60 hover:opacity-100 font-medium pb-1 transition-all"
-            >
-              Carregar BD E-Mails
-            </button>
-          </div>
+          <div className="flex items-center space-x-6 border-r border-white/20 pr-6">
+
+  {/* ✅ Carregar Emails */}
+  <button 
+    onClick={() => setImportModal(true)}
+    className="opacity-60 hover:opacity-100 font-medium pb-1 transition-all"
+  >
+    Carregar Emails*
+  </button>
+
+  {/* ✅ Carregar Dados */}
+  <label className="opacity-60 hover:opacity-100 font-medium pb-1 transition-all cursor-pointer">
+    Carregar Dados
+    <input 
+      type="file" 
+      className="hidden" 
+      accept=".xlsx,.xls,.html" 
+      onChange={handleFileChange} 
+      ref={fileInputRef} 
+    />
+  </label>
+
+  {/* ✅ Atrasos */}
+  <button 
+    onClick={() => setMode('ATRASO')}
+    className={cn(
+      "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
+      mode === 'ATRASO' ? "border-b-2 border-white opacity-100" : "opacity-60"
+    )}
+  >
+    Atrasos
+  </button>
+
+  {/* ✅ Diferenças */}
+  <button 
+    onClick={() => setMode('DIFERENCA')}
+    className={cn(
+      "opacity-90 hover:opacity-100 font-medium pb-1 transition-all",
+      mode === 'DIFERENCA' ? "border-b-2 border-white opacity-100" : "opacity-60"
+    )}
+  >
+    Diferenças
+  </button>
+
+</div>
           <div className="hidden md:flex items-center space-x-2">
             <span className="opacity-80 text-xs">Equipa AFSN</span>
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-xs ring-1 ring-white/10">AF</div>
@@ -679,18 +770,6 @@ alert("Ranking importado com sucesso!");
 
       {/* Top Action Bar */}
       <div className="h-20 bg-white border-b border-gray-200 flex items-center px-6 justify-between shadow-sm shrink-0">
-        <div className="flex items-center space-x-4">
-          <label className="border-2 border-dashed border-[#0A6ED1]/40 bg-[#0A6ED1]/5 rounded px-4 py-2 flex items-center space-x-3 cursor-pointer hover:bg-[#0A6ED1]/10 transition-colors group">
-             <FileSpreadsheet size={20} className="text-[#0A6ED1]" />
-             <div>
-               <p className="text-[10px] uppercase font-bold text-[#0A6ED1]">Carregar</p>
-               <p className="text-xs font-semibold text-slate-600">
-                 export.xlsx
-               </p>
-             </div>
-             <input type="file" className="hidden" accept=".xlsx,.xls,.html" onChange={handleFileChange} ref={fileInputRef} />
-          </label>
-        </div>
         
         <div className="flex space-x-2 items-center">
 
