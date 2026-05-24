@@ -149,29 +149,48 @@ const handleResetAll = () => {
   const results = mode === 'ATRASO'
   ? resultsAtraso
   : resultsDiferenca;
-  const hasEmailsForAll =
+
+const hasEmailsForAll =
   results.length > 0 &&
   results.every(item => emails[item.ref3]?.email);
 
-  // Right panel calculations
-  const allDocsForMetrics = results.flatMap(r => r.docs);
-  const totalDocsCount = allDocsForMetrics.length;
-  const avgDelay = totalDocsCount > 0 
-    ? allDocsForMetrics.reduce((sum, d) => sum + (d.diasUteis || 0), 0) / totalDocsCount 
-    : 0;
-  const maxDelay = totalDocsCount > 0 
-    ? Math.max(...allDocsForMetrics.map(d => d.diasUteis || 0)) 
-    : 0;
-  
-  // DIFERENÇAS Calculations
-  const maxDifferences = results.length > 0
-    ? Math.max(...results.map(r => r.docs.length))
-    : 0;
-  const avgValue = results.length > 0
-    ? results.reduce((sum, r) => sum + r.total, 0) / results.length
-    : 0;
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
+// Right panel calculations
+const allDocsForMetrics = results.flatMap(r => r.docs);
+
+const totalDocsCount = allDocsForMetrics.length;
+
+const avgDelay = totalDocsCount > 0 
+  ? allDocsForMetrics.reduce((sum, d) => sum + (d.diasUteis || 0), 0) / totalDocsCount 
+  : 0;
+
+// ✅ maxDelay CORRETO (corrigido)
+const maxDelay = totalDocsCount > 0 
+  ? Math.max(...allDocsForMetrics.map(d => d.diasUteis || 0)) 
+  : 0;
+
+// ✅ vendedor com maior atraso (AGORA NO SÍTIO CERTO)
+let maxDelayVendor: GroupedData | null = null;
+
+if (mode === 'ATRASO' && results.length > 0) {
+  results.forEach(item => {
+    item.docs.forEach(doc => {
+      if ((doc.diasUteis || 0) === maxDelay) {
+        maxDelayVendor = item;
+      }
+    });
+  });
+}
+
+// DIFERENÇAS Calculations
+const maxDifferences = results.length > 0
+  ? Math.max(...results.map(r => r.docs.length))
+  : 0;
+
+const avgValue = results.length > 0
+  ? results.reduce((sum, r) => sum + r.total, 0) / results.length
+  : 0;
+
+const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync ranking from localStorage if it changes externally or on emails change (legacy sync)
 
@@ -722,34 +741,44 @@ alert("Ranking importado com sucesso!");
                 </motion.p>
               </div>
 
-              {mode === 'ATRASO' && (
-                <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
-                  <p className="text-xs text-gray-500 mb-1">Nº Recibos sem Depósito</p>
-                  <p className="text-2xl font-bold text-slate-800 tracking-tight">
-                    {totalDocsCount}
-                  </p>
-                </div>
-              )}
+             {mode === 'ATRASO' && (
+  <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
+    <p className="text-xs text-gray-500 mb-1">Nº Recibos sem Depósito</p>
+    <p className="text-2xl font-bold text-slate-800 tracking-tight">
+      {totalDocsCount}
+    </p>
+  </div>
+)}
 
-              <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
-                <p className="text-xs text-gray-500 mb-1">
-                  {mode === 'ATRASO' ? 'Maior Atraso' : 'Maior Nº de Diferenças'}
-                </p>
-                <p className="text-2xl font-bold text-red-600 tracking-tight">
-                  {mode === 'ATRASO' ? `${maxDelay} dias` : maxDifferences}
-                </p>
-              </div>
+<div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
+  <p className="text-xs text-gray-500 mb-1">
+    {mode === 'ATRASO' ? 'Maior Atraso' : 'Maior Nº de Diferenças'}
+  </p>
 
-              <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
-                <p className="text-xs text-gray-500 mb-1">
-                  {mode === 'ATRASO' ? 'Média Atraso' : 'Média de Valor'}
-                </p>
-                <p className="text-2xl font-bold text-orange-600 tracking-tight">
-                  {mode === 'ATRASO' 
-                    ? `${avgDelay.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} dias` 
-                    : formatCurrency(avgValue)}
-                </p>
-              </div>
+  <p className="text-2xl font-bold text-red-600 tracking-tight">
+    {mode === 'ATRASO' ? `${maxDelay} dias` : maxDifferences}
+  </p>
+
+  {/* ✅ NOVO — vendedor com maior atraso */}
+  {mode === 'ATRASO' && maxDelayVendor && (
+    <p className="text-[10px] text-slate-800 mt-1">
+      {maxDelayVendor.ref3} - {maxDelayVendor.vendedor}
+    </p>
+  )}
+</div>
+
+<div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
+  <p className="text-xs text-gray-500 mb-1">
+    {mode === 'ATRASO' ? 'Média Atraso' : 'Média de Valor'}
+  </p>
+
+  <p className="text-2xl font-bold text-orange-600 tracking-tight">
+    {mode === 'ATRASO' 
+      ? `${avgDelay.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} dias` 
+      : formatCurrency(avgValue)}
+  </p>
+</div>
+
             </div>
           </div>
           
