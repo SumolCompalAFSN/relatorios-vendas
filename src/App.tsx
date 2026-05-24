@@ -577,13 +577,29 @@ data.forEach(item => {
       count: Number(row.Contador || 0)
     }));
 
-    setRanking(imported);
-    localStorage.setItem("app_ranking", JSON.stringify(imported));
+    setRanking(prev => {
 
-    const now = new Date().toLocaleString();
-    localStorage.setItem("ranking_last_update", now);
+  const merged = prev.map(r => ({ ...r })); // ✅ cópia segura
 
-    alert("Ranking importado com sucesso!");
+  imported.forEach(newItem => {
+    const existing = merged.find(r => r.ref === newItem.ref);
+
+    if (existing) {
+      existing.count += newItem.count;
+    } else {
+      merged.push({ ...newItem }); // ✅ também copiar aqui
+    }
+  });
+
+  localStorage.setItem("app_ranking", JSON.stringify(merged));
+
+  return merged;
+});
+
+const now = new Date().toLocaleString();
+localStorage.setItem("ranking_last_update", now);
+
+alert("Ranking importado com sucesso!");
     
   } catch (err) {
     console.error(err);
