@@ -1011,7 +1011,7 @@ alert("Ranking importado com sucesso!");
               <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                 <h3 className="font-bold text-slate-800 flex items-center gap-2">
                   <Settings size={20} className="text-[#0A6ED1]" />
-                  Painel de Configuração
+                  Painel de Carregamento de E-mails
                 </h3>
               </div>
               
