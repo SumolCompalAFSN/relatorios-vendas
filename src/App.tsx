@@ -865,13 +865,16 @@ data.forEach(item => {
                   </button>
                    <button
   onClick={() => {
-    if (!emails[item.ref3]?.email) return;
+  if (!emails[item.ref3]?.email) return;
+  if (item.enviado) return;   // ✅ NOVO — BLOQUEIO
 
-    if (mode === 'ATRASO') {
-  atualizarRanking(item.ref3);
-}
-    openEmail(item);
-  }}
+  if (mode === 'ATRASO') {
+    atualizarRanking(item.ref3);
+  }
+
+  openEmail(item);
+}}
+
   disabled={!emails[item.ref3]?.email}
   title={
     emails[item.ref3]?.email
