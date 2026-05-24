@@ -1011,14 +1011,8 @@ alert("Ranking importado com sucesso!");
               <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                 <h3 className="font-bold text-slate-800 flex items-center gap-2">
                   <Settings size={20} className="text-[#0A6ED1]" />
-                  Painel de Carregamento de E-Mails
+                  Painel de Carregamento de Emails
                 </h3>
-                <button 
-                  onClick={() => setImportModal(false)} 
-                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition"
-                >
-                  <Trash2 size={18} />
-                </button>
               </div>
               
               <div className="p-6 space-y-6">
