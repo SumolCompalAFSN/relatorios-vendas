@@ -321,7 +321,15 @@ if (mode === 'ATRASO') {
     });
 
     
-      const final = Object.values(groups).sort((a, b) => b.total - a.total);
+      const final = Object.values(groups).sort((a, b) => {
+
+  const maxA = Math.max(...a.docs.map(d => d.diasUteis || 0));
+  const maxB = Math.max(...b.docs.map(d => d.diasUteis || 0));
+
+  if (maxB !== maxA) return maxB - maxA;
+
+  return b.total - a.total; // desempate por valor
+});
 
       if (mode === 'ATRASO') {
         setResultsAtraso(final);
