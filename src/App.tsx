@@ -483,9 +483,13 @@ if (mode === 'ATRASO') {
 
 console.log("DEBUG RESULT 0:", data[0]);
 
+
 data.forEach(item => {
 
+  if (item.enviado) return; // ✅ CRÍTICO
+
   if (mode === 'ATRASO') {
+
     const ref = item.ref3.toString().padStart(3, "0");
 
     setRanking(prev => {
