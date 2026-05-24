@@ -159,7 +159,18 @@ const handleResetAll = () => {
   const avgDelay = totalDocsCount > 0 
     ? allDocsForMetrics.reduce((sum, d) => sum + (d.diasUteis || 0), 0) / totalDocsCount 
     : 0;
-  const maxDelay = totalDocsCount > 0 
+  const maxDelay = totalDocsCount > 0
+    let maxDelayVendor: GroupedData | null = null;
+
+if (mode === 'ATRASO' && results.length > 0) {
+  results.forEach(item => {
+    item.docs.forEach(doc => {
+      if ((doc.diasUteis || 0) === maxDelay) {
+        maxDelayVendor = item;
+      }
+    });
+  });
+}
     ? Math.max(...allDocsForMetrics.map(d => d.diasUteis || 0)) 
     : 0;
   
@@ -738,6 +749,13 @@ alert("Ranking importado com sucesso!");
                 <p className="text-2xl font-bold text-red-600 tracking-tight">
                   {mode === 'ATRASO' ? `${maxDelay} dias` : maxDifferences}
                 </p>
+                
+{/* ✅ NOVO — vendedor com maior atraso */}
+  {mode === 'ATRASO' && maxDelayVendor && (
+    <p className="text-[10px] text-slate-800 mt-1">
+      {maxDelayVendor.ref3} - {maxDelayVendor.vendedor}
+    </p>
+  )}
               </div>
 
               <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
