@@ -1052,7 +1052,7 @@ alert("Ranking importado com sucesso!");
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <label className="flex items-center justify-center gap-2 bg-[#0A6ED1] text-white p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition font-bold text-xs shadow-md">
                     <Import size={16} />
-                    Carregar Template
+                    Carregar Emails
                     <input type="file" className="hidden" accept=".xlsx" onChange={handleImportEmails} />
                   </label>
                   <button 
@@ -1066,7 +1066,7 @@ alert("Ranking importado com sucesso!");
                     className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-500 p-3 rounded-lg hover:bg-gray-50 transition font-bold text-xs"
                   >
                     <History size={16} />
-                    Reset Fabrica
+                    Reset Emails
                   </button>
                 </div>
               </div>
