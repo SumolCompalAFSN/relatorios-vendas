@@ -683,9 +683,9 @@ alert("Ranking importado com sucesso!");
           <label className="border-2 border-dashed border-[#0A6ED1]/40 bg-[#0A6ED1]/5 rounded px-4 py-2 flex items-center space-x-3 cursor-pointer hover:bg-[#0A6ED1]/10 transition-colors group">
              <FileSpreadsheet size={20} className="text-[#0A6ED1]" />
              <div>
-               <p className="text-[10px] uppercase font-bold text-[#0A6ED1]">Carregar SAP</p>
+               <p className="text-[10px] uppercase font-bold text-[#0A6ED1]">Carregar</p>
                <p className="text-xs font-semibold text-slate-600">
-                  {mode === 'ATRASO' ? 'export_atr.xlsx' : 'export_dif.xlsx'}
+                 export.xlsx
                </p>
              </div>
              <input type="file" className="hidden" accept=".xlsx,.xls,.html" onChange={handleFileChange} ref={fileInputRef} />
