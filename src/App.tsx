@@ -287,7 +287,7 @@ filtered.forEach(row => {
   if (!ref3 || ref3 === "000") return;
 
   const emailMap = emails[ref3];
-  const key = `${ref3}_${emailMap?.email || 'sem_email'}`;
+  const key = ref3;
 
   if (!groupsAtraso[key]) {
     groupsAtraso[key] = {
