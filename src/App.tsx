@@ -766,7 +766,7 @@ alert("Ranking importado com sucesso!");
   "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
   highlightTabs
     ? mode === 'ATRASO'
-      ? "bg-green-700 text-white underline shadow-md"
+      ? "bg-green-700 text-white border-b-2 border-white shadow-md"
       : "bg-green-500 text-white"
     : mode === 'ATRASO'
       ? "bg-white text-[#0A6ED1] shadow-md"
@@ -784,12 +784,13 @@ alert("Ranking importado com sucesso!");
   "px-3 py-1.5 rounded-md text-sm font-semibold transition-all",
   highlightTabs
     ? mode === 'DIFERENCA'
-      ? "bg-green-700 text-white underline shadow-md"
+      ? "bg-green-700 text-white border-b-2 border-white shadow-md"
       : "bg-green-500 text-white"
     : mode === 'DIFERENCA'
       ? "bg-white text-[#0A6ED1] shadow-md"
       : "bg-white/10 hover:bg-white/20 text-white"
 )}
+
   >
     Diferenças
   </button>
