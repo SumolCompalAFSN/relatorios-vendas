@@ -198,11 +198,7 @@ const fileInputRef = useRef<HTMLInputElement>(null);
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file name for the mode
-    if (mode === 'ATRASO' && file.name !== 'export_atr.xlsx') {
-      alert('Para o modo Atrasos, o ficheiro deve chamar-se: export_atr.xlsx');
-      return;
-    }
+   
     
     // 🔥 TEMP: deixar passar tudo para testar
     if (mode === 'DIFERENCA') {
