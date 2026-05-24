@@ -149,18 +149,27 @@ const handleResetAll = () => {
   const results = mode === 'ATRASO'
   ? resultsAtraso
   : resultsDiferenca;
-  const hasEmailsForAll =
+
+const hasEmailsForAll =
   results.length > 0 &&
   results.every(item => emails[item.ref3]?.email);
 
-  // Right panel calculations
-  const allDocsForMetrics = results.flatMap(r => r.docs);
-  const totalDocsCount = allDocsForMetrics.length;
-  const avgDelay = totalDocsCount > 0 
-    ? allDocsForMetrics.reduce((sum, d) => sum + (d.diasUteis || 0), 0) / totalDocsCount 
-    : 0;
-  const maxDelay = totalDocsCount > 0
-    let maxDelayVendor: GroupedData | null = null;
+// Right panel calculations
+const allDocsForMetrics = results.flatMap(r => r.docs);
+
+const totalDocsCount = allDocsForMetrics.length;
+
+const avgDelay = totalDocsCount > 0 
+  ? allDocsForMetrics.reduce((sum, d) => sum + (d.diasUteis || 0), 0) / totalDocsCount 
+  : 0;
+
+// ✅ maxDelay CORRETO (corrigido)
+const maxDelay = totalDocsCount > 0 
+  ? Math.max(...allDocsForMetrics.map(d => d.diasUteis || 0)) 
+  : 0;
+
+// ✅ vendedor com maior atraso (AGORA NO SÍTIO CERTO)
+let maxDelayVendor: GroupedData | null = null;
 
 if (mode === 'ATRASO' && results.length > 0) {
   results.forEach(item => {
@@ -171,18 +180,17 @@ if (mode === 'ATRASO' && results.length > 0) {
     });
   });
 }
-    ? Math.max(...allDocsForMetrics.map(d => d.diasUteis || 0)) 
-    : 0;
-  
-  // DIFERENÇAS Calculations
-  const maxDifferences = results.length > 0
-    ? Math.max(...results.map(r => r.docs.length))
-    : 0;
-  const avgValue = results.length > 0
-    ? results.reduce((sum, r) => sum + r.total, 0) / results.length
-    : 0;
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+// DIFERENÇAS Calculations
+const maxDifferences = results.length > 0
+  ? Math.max(...results.map(r => r.docs.length))
+  : 0;
+
+const avgValue = results.length > 0
+  ? results.reduce((sum, r) => sum + r.total, 0) / results.length
+  : 0;
+
+const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync ranking from localStorage if it changes externally or on emails change (legacy sync)
 
