@@ -1013,12 +1013,6 @@ alert("Ranking importado com sucesso!");
                   <Settings size={20} className="text-[#0A6ED1]" />
                   Painel de Configuração
                 </h3>
-                <button 
-                  onClick={() => setImportModal(false)} 
-                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition"
-                >
-                  <Trash2 size={18} />
-                </button>
               </div>
               
               <div className="p-6 space-y-6">
