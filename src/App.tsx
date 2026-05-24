@@ -875,7 +875,7 @@ data.forEach(item => {
   openEmail(item);
 }}
 
-  disabled={!emails[item.ref3]?.email}
+  disabled={!emails[item.ref3]?.email || item.enviado}
   title={
     emails[item.ref3]?.email
       ? "Enviar email"
