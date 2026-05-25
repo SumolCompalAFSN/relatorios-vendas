@@ -78,6 +78,7 @@ export default function App() {
   const highlightEmails = !hasEmails;
   const highlightDados = hasEmails && !hasData;
   const highlightTabs = hasEmails && hasData;
+  const [helpOpen, setHelpOpen] = useState(false);
 
 
 
