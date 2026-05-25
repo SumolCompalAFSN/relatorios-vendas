@@ -817,7 +817,7 @@ alert("Ranking importado com sucesso!");
       {/* Top Action Bar */}
       <div className="h-20 bg-white border-b border-gray-200 flex items-center px-6 justify-between shadow-sm shrink-0">
         
-        <div className="flex space-x-2 items-center">
+        <div className="flex space-x-2 items-center ml-auto">
 
   {/* Export */}
   <button
@@ -1112,7 +1112,7 @@ alert("Ranking importado com sucesso!");
             <div className="space-y-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-  <h3 className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">
+  <h3 className="text-[10px] uppercase font-bold text-black-400 tracking-widest">
     Ranking de Atividade
   </h3>
 
