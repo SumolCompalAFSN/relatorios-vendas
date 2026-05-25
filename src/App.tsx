@@ -105,14 +105,14 @@ useEffect(() => {
 }, []);
   
 // 🔥 ✅ NOVO — REPROCESSAR DADOS QUANDO EMAILS MUDAM
-useEffect(() => {
-  if (results.length === 0) return;
+const rawDataRef = useRef<any[]>([]);
 
-  const allData = results.flatMap(r => r.docs);
-  processData(allData);
+useEffect(() => {
+  if (rawDataRef.current.length === 0) return;
+
+  processData(rawDataRef.current);
 
 }, [emails]);
-
 
 // 🔵 ✅ NOVA FUNÇÃO — ATUALIZAR RANKING
 const atualizarRanking = (ref: string) => {
@@ -216,6 +216,7 @@ const fileInputRef = useRef<HTMLInputElement>(null);
     setLoading(true);
     try {
       const parsedData = await parseSAPFile(file);
+      rawDataRef.current = parsedData;
       console.log("📊 PARSED DATA:", parsedData);
       console.log("📊 TOTAL:", parsedData.length);
       
@@ -234,16 +235,17 @@ const fileInputRef = useRef<HTMLInputElement>(null);
   };
 
   const processData = (data: any[]) => {
+    const clonedData = data.map(row => ({ ...row }));
     const today = new Date();
     
     // Filtro OBRIGATÓRIO: Apenas Tipo de documento = "ZD"
-const zdData = data.filter(row =>
+const zdData = clonedData.filter(row =>
   String(row['Tipo de documento'] || '').toUpperCase() === 'ZD'
 );
 console.log("📊 Linhas ZD encontradas:", zdData.length);
 
 // ✅ NOVO: filtro para Diferenças (SA)
-const saData = data.filter(row =>
+const saData = clonedData.filter(row =>
   String(row['Tipo de documento'] || '').toUpperCase() === 'SA'
 );
 console.log("📊 Linhas SA encontradas:", saData.length);
@@ -287,7 +289,7 @@ filtered.forEach(row => {
   if (!ref3 || ref3 === "000") return;
 
   const emailMap = emails[ref3];
-  const key = `${ref3}_${emailMap?.email || 'sem_email'}`;
+  const key = ref3;
 
   if (!groupsAtraso[key]) {
     groupsAtraso[key] = {
@@ -717,8 +719,8 @@ alert("Ranking importado com sucesso!");
           <img src={rvvIcon} alt="RVV" className="w-10 h-10 object-contain" />
           
           <h1 className="text-white font-semibold text-lg tracking-tight italic flex items-center">
-            RVV — Relatórios Valores Vendas 
-            <span className="font-normal opacity-70 ml-2 text-xs not-italic border-l border-white/20 pl-2">v3.5.0</span>
+            Relatórios Valores Vendas 
+            <span className="font-normal opacity-70 ml-2 text-xs not-italic border-l border-white/20 pl-2">v3.6.0</span>
           </h1>
         </div>
         
