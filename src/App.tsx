@@ -235,16 +235,17 @@ const fileInputRef = useRef<HTMLInputElement>(null);
   };
 
   const processData = (data: any[]) => {
+    const clonedData = data.map(row => ({ ...row }));
     const today = new Date();
     
     // Filtro OBRIGATÓRIO: Apenas Tipo de documento = "ZD"
-const zdData = data.filter(row =>
+const zdData = clonedData.filter(row =>
   String(row['Tipo de documento'] || '').toUpperCase() === 'ZD'
 );
 console.log("📊 Linhas ZD encontradas:", zdData.length);
 
 // ✅ NOVO: filtro para Diferenças (SA)
-const saData = data.filter(row =>
+const saData = clonedData.filter(row =>
   String(row['Tipo de documento'] || '').toUpperCase() === 'SA'
 );
 console.log("📊 Linhas SA encontradas:", saData.length);
