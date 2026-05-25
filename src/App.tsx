@@ -105,14 +105,14 @@ useEffect(() => {
 }, []);
   
 // 🔥 ✅ NOVO — REPROCESSAR DADOS QUANDO EMAILS MUDAM
-useEffect(() => {
-  if (results.length === 0) return;
+const rawDataRef = useRef<any[]>([]);
 
-  const allData = results.flatMap(r => r.docs);
-  processData(allData);
+useEffect(() => {
+  if (rawDataRef.current.length === 0) return;
+
+  processData(rawDataRef.current);
 
 }, [emails]);
-
 
 // 🔵 ✅ NOVA FUNÇÃO — ATUALIZAR RANKING
 const atualizarRanking = (ref: string) => {
@@ -216,6 +216,7 @@ const fileInputRef = useRef<HTMLInputElement>(null);
     setLoading(true);
     try {
       const parsedData = await parseSAPFile(file);
+      rawDataRef.current = parsedData;
       console.log("📊 PARSED DATA:", parsedData);
       console.log("📊 TOTAL:", parsedData.length);
       
