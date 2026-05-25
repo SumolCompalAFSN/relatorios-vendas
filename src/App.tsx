@@ -846,7 +846,7 @@ alert("Ranking importado com sucesso!");
         {/* Sidebar Stats */}
         <aside className="w-[250px] bg-white border-r border-gray-200 p-4 space-y-6 overflow-y-auto hidden lg:block shrink-0">
           <div>
-            <h3 className="text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest">Estatísticas Rápidas</h3>
+            <h3 className="text-[10px] uppercase font-bold text-black-400 mb-3 tracking-widest">Estatísticas Rápidas</h3>
             <div className="space-y-3">
               <div className="p-4 bg-[#F5F6F7] rounded-lg border border-gray-100 shadow-sm">
                 <p className="text-xs text-gray-500 mb-1">Montante Total</p>
