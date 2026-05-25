@@ -78,6 +78,7 @@ export default function App() {
   const highlightEmails = !hasEmails;
   const highlightDados = hasEmails && !hasData;
   const highlightTabs = hasEmails && hasData;
+  const [helpOpen, setHelpOpen] = useState(false);
 
 
 
@@ -737,7 +738,7 @@ alert("Ranking importado com sucesso!");
     : "bg-white/10 hover:bg-white/20 text-white"
 )}
   >
-    Carregar Emails*
+    Carregar Emails
   </button>
 
   {/* ✅ Carregar Dados */}
@@ -796,6 +797,13 @@ alert("Ranking importado com sucesso!");
   >
     Diferenças
   </button>
+            <button
+  onClick={() => setHelpOpen(true)}
+  className="px-3 py-1.5 rounded-md text-sm font-semibold 
+             bg-white/10 hover:bg-white/20 text-white transition-all"
+>
+  ?
+</button>
 
 </div>
 
@@ -1232,7 +1240,68 @@ alert("Ranking importado com sucesso!");
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
+     </AnimatePresence>
+
+      {/* ✅ HELP MODAL (NOVO — ADICIONADO AQUI 🔥) */}
+      {helpOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          
+          <div className="bg-white w-[500px] max-h-[70vh] rounded-lg shadow-lg flex flex-col">
+
+            {/* Header */}
+            <div className="p-4 border-b font-bold text-lg">
+              Ajuda
+            </div>
+
+            {/* Conteúdo */}
+            <div className="p-4 overflow-y-auto text-sm whitespace-pre-line">
+{`✅ COMO USAR A APLICAÇÃO RVV - Relatórios Valores Vendas
+
+1️⃣ Carregar Emails
+- Carregue o ficheiro Template_Emails.xlsx
+- Necessário apenas na primeira utilização
+
+2️⃣ Carregar Dados
+- Carregue o ficheiro export.xlsx
+- Serve para Atrasos e Diferenças
+
+3️⃣ Consultar Informação
+- Atrasos → Depósitos em atraso
+- Diferenças → Divergências de valores a regularizar
+
+4️⃣ Enviar Emails
+- Utilize o botão "Enviar E-Mail"
+- Ou exporte ZIP para envio em lote
+
+5️⃣ Ranking
+- Conta apenas envios de Atrasos
+- Pode exportar/importar ranking
+
+⚠️ NOTAS IMPORTANTES
+
+- O ficheiro export.xlsx deve estar atualizado
+- Os emails devem estar corretamente configurados
+- O ranking é guardado no computador do utilizador
+
+✔ Fluxo recomendado:
+Carregar Emails → Carregar Dados → Utilizar`}
+            </div>
+
+            {/* Footer */}
+            <div className="p-3 border-t flex justify-end">
+              <button 
+                onClick={() => setHelpOpen(false)}
+                className="px-4 py-2 bg-[#0A6ED1] text-white rounded hover:bg-blue-700"
+              >
+                Fechar
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 }
