@@ -738,7 +738,7 @@ alert("Ranking importado com sucesso!");
     : "bg-white/10 hover:bg-white/20 text-white"
 )}
   >
-    Carregar Emails*
+    Carregar Emails
   </button>
 
   {/* ✅ Carregar Dados */}
@@ -1255,9 +1255,9 @@ alert("Ranking importado com sucesso!");
 
             {/* Conteúdo */}
             <div className="p-4 overflow-y-auto text-sm whitespace-pre-line">
-{`✅ COMO USAR A APLICAÇÃO RVV
+{`✅ COMO USAR A APLICAÇÃO RVV - Relatórios Valores Vendas
 
-1️⃣ Carregar Emails*
+1️⃣ Carregar Emails
 - Carregue o ficheiro Template_Emails.xlsx
 - Necessário apenas na primeira utilização
 
@@ -1266,8 +1266,8 @@ alert("Ranking importado com sucesso!");
 - Serve para Atrasos e Diferenças
 
 3️⃣ Consultar Informação
-- Atrasos → depósitos em atraso
-- Diferenças → divergências de valores
+- Atrasos → Depósitos em atraso
+- Diferenças → Divergências de valores a regularizar
 
 4️⃣ Enviar Emails
 - Utilize o botão "Enviar E-Mail"
@@ -1281,7 +1281,7 @@ alert("Ranking importado com sucesso!");
 
 - O ficheiro export.xlsx deve estar atualizado
 - Os emails devem estar corretamente configurados
-- O ranking é guardado no computador
+- O ranking é guardado no computador do utilizador
 
 ✔ Fluxo recomendado:
 Carregar Emails → Carregar Dados → Utilizar`}
