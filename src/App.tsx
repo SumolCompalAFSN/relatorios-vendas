@@ -719,8 +719,8 @@ alert("Ranking importado com sucesso!");
           <img src={rvvIcon} alt="RVV" className="w-10 h-10 object-contain" />
           
           <h1 className="text-white font-semibold text-lg tracking-tight italic flex items-center">
-            RVV — Relatórios Valores Vendas 
-            <span className="font-normal opacity-70 ml-2 text-xs not-italic border-l border-white/20 pl-2">v3.5.0</span>
+            Relatórios Valores Vendas 
+            <span className="font-normal opacity-70 ml-2 text-xs not-italic border-l border-white/20 pl-2">v3.6.0</span>
           </h1>
         </div>
         
