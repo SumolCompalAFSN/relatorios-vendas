@@ -36,6 +36,7 @@ import { EMAILS_DEFAULT, EmailConfig } from './data/emailsDefault';
 import { getRef3, formatCurrency, cn, parseSAPValue } from './lib/utils';
 import { buildHtmlEmailAtrasos, buildHtmlEmailDiferencas, generatePDF, EmailData } from './utils/emailUtils';
 const NETWORK_PATH = "Y:/S+C/negocio/MP-GC/7. Serviço Cliente/Crédito, Cobrança e Facturação/Facturação/PFTD/RVV/ranking_atual.xlsx";
+const EMAIL_CC_GLOBAL = "fernando.coimbra@sumolcompal.pt";
 import rvvIcon from './assets/rvv-icon.png';
 
 
@@ -297,7 +298,9 @@ filtered.forEach(row => {
       ref3,
       vendedor: emailMap?.nome || ref3,
       email: emailMap?.email || '',
-      emailGT: emailMap?.cc || '',
+      emailGT: emailMap?.cc
+  ? `${emailMap.cc};${EMAIL_CC_GLOBAL}`
+  : EMAIL_CC_GLOBAL,
       docs: [],
       total: 0
     };
@@ -329,7 +332,9 @@ diferencas.forEach(row => {
       ref3,
       vendedor: emailMap?.nome || ref3,
       email: emailMap?.email || '',
-      emailGT: emailMap?.cc || '',
+      emailGT: emailMap?.cc
+  ? `${emailMap.cc};${EMAIL_CC_GLOBAL}`
+  : EMAIL_CC_GLOBAL,
       docs: [],
       total: 0
     };
@@ -388,7 +393,9 @@ setResultsDiferenca(finalDif);
           ref3,
           vendedor: emailMap?.nome || ref3,
           email: emailMap?.email || '',
-          emailGT: emailMap?.cc || '',
+          emailGT: emailMap?.cc
+  ? `${emailMap.cc};${EMAIL_CC_GLOBAL}`
+  : EMAIL_CC_GLOBAL,
           docs: [],
           total: 0
         };
