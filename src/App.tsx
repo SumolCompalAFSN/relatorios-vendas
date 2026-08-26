@@ -255,7 +255,16 @@ console.log("📊 Linhas SA encontradas:", saData.length);
 // ✅ ATRASOS (ZD)
 const filtered = zdData.filter(row => {
   const texto = String(row.texto || row['Texto'] || '').toUpperCase();
-  if (texto.includes('EM ANÁLISE')) return false;
+
+  const textoCab = String(
+    row['Texto cabeçalho documento'] || ''
+  ).toUpperCase();
+
+  if (
+    texto.includes('EM ANÁLISE') ||
+    textoCab.includes('EM ANÁLISE')
+  ) return false;
+
   if (texto.includes('PAG. TPA VENDEDOR')) return false;
 
   let dataLanc = row.data || row['Data de lançamento'];
@@ -272,10 +281,26 @@ const filtered = zdData.filter(row => {
   return dias >= 2;
 });
 
-console.log("✅ FILTRADOS ATRASO:", filtered.length);
-
 // ✅ DIFERENÇAS (SA)
-const diferencas = saData;
+const diferencas = saData.filter(row => {
+
+  const texto = String(
+    row.texto || row['Texto'] || ''
+  ).toUpperCase();
+
+  const textoCab = String(
+    row['Texto cabeçalho documento'] || ''
+  ).toUpperCase();
+
+  if (
+    texto.includes('EM ANÁLISE') ||
+    textoCab.includes('EM ANÁLISE')
+  ) {
+    return false;
+  }
+
+  return true;
+});
 
 // ✅ AGRUPAR ATRASOS
 const groupsAtraso: Record<string, GroupedData> = {};
