@@ -255,7 +255,7 @@ console.log("📊 Linhas SA encontradas:", saData.length);
 // ✅ ATRASOS (ZD)
 const filtered = zdData.filter(row => {
   const texto = String(row.texto || row['Texto'] || '').toUpperCase();
-  if (texto === 'EM ANÁLISE') return false;
+  if (texto.includes('EM ANÁLISE')) return false;
   if (texto.includes('PAG. TPA VENDEDOR')) return false;
 
   let dataLanc = row.data || row['Data de lançamento'];
