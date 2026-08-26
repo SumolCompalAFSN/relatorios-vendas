@@ -65,7 +65,7 @@ export async function parseSAPFile(file: File): Promise<any[]> {
 
     const jsonData = XLSX.utils.sheet_to_json(worksheet, {
       defval: "",
-      raw: false,
+      raw: true,
       blankrows: false
     });
 
