@@ -47,12 +47,12 @@ export function formatCurrency(value: number | string): string {
 export function getRef3(reference: string | number): string {
   const str = String(reference || '').trim().toUpperCase();
 
-  // Primeiro tenta apanhar códigos tipo G04-
-  const alphaMatch = str.match(/^([A-Z]\d{2})-/);
+  // G04 ou G04-xxxx
+  const alphaMatch = str.match(/^([A-Z]\d{2})/);
   if (alphaMatch) return alphaMatch[1];
 
-  // Depois tenta os códigos normais 049-
-  const numericMatch = str.match(/^(\d{3})-/);
+  // 049 ou 049-xxxx
+  const numericMatch = str.match(/^(\d{3})/);
   if (numericMatch) return numericMatch[1];
 
   return '';
