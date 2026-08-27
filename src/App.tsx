@@ -310,7 +310,11 @@ filtered.forEach(row => {
   let ref3 = getRef3(rawRef);
 
   if (ref3) {
-    ref3 = String(ref3).trim().replace(/\D/g, "").padStart(3, "0");
+    ref3 = String(ref3).trim().toUpperCase();
+
+if (/^\d+$/.test(ref3)) {
+  ref3 = ref3.padStart(3, "0");
+}
   }
 
   if (!ref3 || ref3 === "000") return;
@@ -344,7 +348,11 @@ diferencas.forEach(row => {
   let ref3 = getRef3(rawRef);
 
   if (ref3) {
-    ref3 = String(ref3).trim().replace(/\D/g, "").padStart(3, "0");
+    ref3 = String(ref3).trim().toUpperCase();
+
+if (/^\d+$/.test(ref3)) {
+  ref3 = ref3.padStart(3, "0");
+}
   }
 
   if (!ref3 || ref3 === "000") return;
@@ -476,7 +484,9 @@ setResultsDiferenca(finalDif);
 
       rows.forEach(row => {
         // Coluna 0: Codigo_3_digitos
-        let codigo = String(row[0] || "").replace(/\D/g, "").padStart(3, "0");
+        let codigo = String(row[0] || "")
+  .trim()
+  .toUpperCase();
         if (!codigo || codigo === "000") return;
 
         const cleanEmail = (val: any) => String(val || '')
