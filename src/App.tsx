@@ -1115,14 +1115,6 @@ alert("Ranking importado com sucesso!");
           <footer className="h-8 bg-[#E2E6E9] border-t border-gray-300 flex items-center px-4 justify-between shrink-0 shadow-inner">
             <div className="flex items-center space-x-6 text-[10px] font-semibold text-gray-600">
               <div className="flex items-center">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2 shadow-[0_0_4px_rgba(34,197,94,0.5)]"></span>
-                SAP Parser: Ativo
-              </div>
-              <div className="flex items-center">
-                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2 shadow-[0_0_4px_rgba(10,110,209,0.5)]"></span>
-                Holidays Data v1.2 (PT)
-              </div>
-              <div className="flex items-center">
                 <span className="w-2 h-2 bg-[#0A6ED1] rounded-full mr-2"></span>
                 Vendedores: {Object.keys(emails).length}
               </div>
