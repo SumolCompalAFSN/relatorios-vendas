@@ -636,23 +636,8 @@ data.forEach(item => {
   if (item.enviado) return; // ✅ CRÍTICO
 
   if (mode === 'ATRASO') {
-
-    const ref = item.ref3.toString().padStart(3, "0");
-
-    setRanking(prev => {
-      const existing = prev.find(r => r.ref === ref);
-
-      if (existing) {
-        return prev.map(r =>
-          r.ref === ref
-            ? { ...r, count: r.count + 1 }
-            : r
-        );
-      } else {
-        return [...prev, { ref, count: 1 }];
-      }
-    });
-  }
+  atualizarRanking(item.ref3);
+}
 
   markAsSent(item);
 });
