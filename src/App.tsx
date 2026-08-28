@@ -1119,7 +1119,7 @@ alert("Ranking importado com sucesso!");
                 Vendedores: {Object.keys(emails).length}
               </div>
             </div>
-            <div className="text-[10px] text-gray-500 italic opacity-10">
+            <div className="text-[10px] text-gray-500 italic opacity-100">
               Sistema de Geração Automática de Relatórios AFSN - {new Date().getFullYear()}
             </div>
           </footer>
